@@ -1,14 +1,11 @@
 import React from 'react';
 import { TransmissionProvider } from './providers/TransmissionProvider';
-import TorrentList from './components/TorrentList';
+import Main from './components/Main';
 
 function App() {
   return (
     <TransmissionProvider>
-      <div className="App">
-        <h1>Transmission Client</h1>
-        <TorrentList />
-      </div>
+      <Main />
     </TransmissionProvider>
   );
 }

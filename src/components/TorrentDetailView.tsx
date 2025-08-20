@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FaBox, FaChartLine, FaDownload, FaUpload, FaCalendarAlt,
-  FaUser, FaFolder, FaComment, FaFile, FaLink
+  FaUser, FaFolder, FaComment, FaFile, FaLink, FaChevronDown, FaChevronUp
 } from 'react-icons/fa';
 import { type TorrentDetails } from '../entities/TorrentDetails';
 import './TorrentDetailView.css';
@@ -36,32 +36,48 @@ interface TorrentDetailViewProps {
 }
 
 const TorrentDetailView: React.FC<TorrentDetailViewProps> = ({ torrent }) => {
+  const [filesExpanded, setFilesExpanded] = useState(false);
+  const files = torrent.files || [];
+  const filesToShow = filesExpanded ? files : files.slice(0, 5);
+
   return (
     <div className="torrent-detail-view">
-      <div className="detail-grid">
-        {/* Row 1 */}
-        <DetailItem icon={<FaBox className="icon" />} label="Size" value={formatBytes(torrent.totalSize)} />
-        <DetailItem icon={<FaChartLine className="icon" />} label="Progress" value={`${(torrent.percentDone * 100).toFixed(2)}%`} />
-        <DetailItem icon={<FaDownload className="icon" />} label="Downloaded" value={formatBytes(torrent.downloadedEver)} />
-        <DetailItem icon={<FaUpload className="icon" />} label="Uploaded" value={formatBytes(torrent.uploadedEver)} />
+      <div className="detail-section">
+        <h5 className="detail-section-title">Transfer</h5>
+        <div className="detail-grid">
+          <DetailItem icon={<FaDownload className="icon" />} label="Downloaded" value={formatBytes(torrent.downloadedEver)} />
+          <DetailItem icon={<FaUpload className="icon" />} label="Uploaded" value={formatBytes(torrent.uploadedEver)} />
+          <DetailItem icon={<FaChartLine className="icon" />} label="Ratio" value={torrent.uploadRatio.toFixed(2)} />
+        </div>
+      </div>
 
-        {/* Row 2 */}
-        <DetailItem icon={<FaCalendarAlt className="icon" />} label="Created On" value={new Date(torrent.dateCreated * 1000).toLocaleDateString()} />
-        <DetailItem icon={<FaUser className="icon" />} label="Creator" value={torrent.creator || 'N/A'} />
-        <DetailItem icon={<FaFolder className="icon" />} label="Location" value={<span className="location-path">{torrent.downloadDir}</span>} />
-        {torrent.comment && <DetailItem icon={<FaComment className="icon" />} label="Comment" value={torrent.comment} />}
+      <div className="detail-section">
+        <h5 className="detail-section-title">Details</h5>
+        <div className="detail-grid">
+          <DetailItem icon={<FaBox className="icon" />} label="Size" value={formatBytes(torrent.totalSize)} />
+          <DetailItem icon={<FaChartLine className="icon" />} label="Progress" value={`${(torrent.percentDone * 100).toFixed(2)}%`} />
+          <DetailItem icon={<FaCalendarAlt className="icon" />} label="Created On" value={new Date(torrent.dateCreated * 1000).toLocaleDateString()} />
+          <DetailItem icon={<FaUser className="icon" />} label="Creator" value={torrent.creator || 'N/A'} />
+          <DetailItem icon={<FaFolder className="icon" />} label="Location" value={<span className="location-path">{torrent.downloadDir}</span>} />
+          {torrent.comment && <DetailItem icon={<FaComment className="icon" />} label="Comment" value={torrent.comment} />}
+        </div>
       </div>
 
       <div className="detail-columns">
         <div className="detail-section">
-          <h5 className="detail-section-title">Files ({torrent.files?.length || 0})</h5>
+          <h5 className="detail-section-title">Files ({files.length})</h5>
           <ul className="detail-list file-list">
-            {torrent.files?.map((file, index) => (
+            {filesToShow.map((file, index) => (
               <li key={index}>
                 {file.name} <span>({formatBytes(file.length)})</span>
               </li>
             ))}
           </ul>
+          {files.length > 5 && (
+            <button className="expand-button" onClick={() => setFilesExpanded(!filesExpanded)}>
+              {filesExpanded ? <><FaChevronUp /> Show Less</> : <><FaChevronDown /> Show More</>}
+            </button>
+          )}
         </div>
 
         <div className="detail-section">

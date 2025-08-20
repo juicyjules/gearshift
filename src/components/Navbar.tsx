@@ -29,7 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ searchTerm, onSearchTermChange }) => {
     const fetchStats = async () => {
       setIsLoading(true);
       try {
-        const response = await transmission.sessionStats();
+        const response = await transmission.stats();
         setStats(response);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch session stats');

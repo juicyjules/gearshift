@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 import './Navbar.css';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type SessionStatsResponse } from '../transmission-rpc/types';
@@ -21,6 +22,8 @@ interface NavbarProps {
   onFilterStatusChange: (status: TorrentStatus | 'all') => void;
   sortBy: string;
   onSortByChange: (sortBy: string) => void;
+  showOnlyActive: boolean;
+  onShowOnlyActiveChange: (show: boolean) => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -30,6 +33,8 @@ const Navbar: React.FC<NavbarProps> = ({
   onFilterStatusChange,
   sortBy,
   onSortByChange,
+  showOnlyActive,
+  onShowOnlyActiveChange,
 }) => {
   const { transmission } = useTransmission();
   const [stats, setStats] = useState<SessionStatsResponse | null>(null);
@@ -61,7 +66,9 @@ const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="navbar">
       <div className="navbar-left">
-        <h1 className="navbar-brand">GEARSHIFT</h1>
+        <div className="navbar-logo">
+          <h1 className="navbar-brand">GEARSHIFT</h1>
+        </div>
         <div className="navbar-search">
           <input
             type="text"
@@ -109,9 +116,14 @@ const Navbar: React.FC<NavbarProps> = ({
           {error && <span className="error-message">{error}</span>}
           {stats && (
             <>
-              <span>↓ {formatBytes(stats.downloadSpeed)}</span>
-              <span>↑ {formatBytes(stats.uploadSpeed)}</span>
-              <span className="stat-active">Active: {stats.activeTorrentCount}</span>
+              <span className="stat-item"><FaArrowDown /> {formatBytes(stats.downloadSpeed)}</span>
+              <span className="stat-item"><FaArrowUp /> {formatBytes(stats.uploadSpeed)}</span>
+              <button
+                className={`stat-active ${showOnlyActive ? 'active' : ''}`}
+                onClick={() => onShowOnlyActiveChange(!showOnlyActive)}
+              >
+                Active: {stats.activeTorrentCount}
+              </button>
             </>
           )}
         </div>

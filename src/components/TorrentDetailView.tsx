@@ -31,32 +31,39 @@ const TorrentDetailView: React.FC<TorrentDetailViewProps> = ({ torrent }) => {
   return (
     <div className="torrent-detail-view">
       <div className="detail-grid">
-        <DetailItem label="Created On" value={new Date(torrent.dateCreated * 1000).toLocaleDateString()} />
-        <DetailItem label="Creator" value={torrent.creator || 'N/A'} />
+        {/* Row 1 */}
+        <DetailItem label="Size" value={formatBytes(torrent.totalSize)} />
+        <DetailItem label="Progress" value={`${(torrent.percentDone * 100).toFixed(2)}%`} />
         <DetailItem label="Downloaded" value={formatBytes(torrent.downloadedEver)} />
         <DetailItem label="Uploaded" value={formatBytes(torrent.uploadedEver)} />
+
+        {/* Row 2 */}
+        <DetailItem label="Created On" value={new Date(torrent.dateCreated * 1000).toLocaleDateString()} />
+        <DetailItem label="Creator" value={torrent.creator || 'N/A'} />
         <DetailItem label="Location" value={<span className="location-path">{torrent.downloadDir}</span>} />
         {torrent.comment && <DetailItem label="Comment" value={torrent.comment} />}
       </div>
 
-      <div className="detail-section">
-        <h5 className="detail-section-title">Files ({torrent.files?.length || 0})</h5>
-        <ul className="detail-list file-list">
-          {torrent.files?.map((file, index) => (
-            <li key={index}>
-              {file.name} <span>({formatBytes(file.length)})</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <div className="detail-columns">
+        <div className="detail-section">
+          <h5 className="detail-section-title">Files ({torrent.files?.length || 0})</h5>
+          <ul className="detail-list file-list">
+            {torrent.files?.map((file, index) => (
+              <li key={index}>
+                {file.name} <span>({formatBytes(file.length)})</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      <div className="detail-section">
-        <h5 className="detail-section-title">Trackers</h5>
-        <ul className="detail-list tracker-list">
-          {torrent.trackers?.map((tracker) => (
-            <li key={tracker.id}>{tracker.announce}</li>
-          ))}
-        </ul>
+        <div className="detail-section">
+          <h5 className="detail-section-title">Trackers</h5>
+          <ul className="detail-list tracker-list">
+            {torrent.trackers?.map((tracker) => (
+              <li key={tracker.id}>{tracker.announce}</li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       <div className="detail-section magnet-section">

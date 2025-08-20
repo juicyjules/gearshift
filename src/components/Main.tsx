@@ -12,6 +12,7 @@ function Main() {
   const [torrents, setTorrents] = useState<TorrentOverview[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<TorrentStatus | 'all'>('all');
+  const [showOnlyActive, setShowOnlyActive] = useState(false);
   const [sortBy, setSortBy] = useState('name');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,9 +53,22 @@ function Main() {
       result = fuse.search(searchTerm).map(res => res.item);
     }
 
-    // Filter by status
+    // Filter by status dropdown
     if (filterStatus !== 'all') {
       result = result.filter(torrent => torrent.status === filterStatus);
+    }
+
+    // Filter by "active" toggle
+    if (showOnlyActive) {
+      const activeStatuses = [
+        TorrentStatus.Downloading,
+        TorrentStatus.Seeding,
+        TorrentStatus.QueuedToDownload,
+        TorrentStatus.QueuedToSeed,
+        TorrentStatus.Verifying,
+        TorrentStatus.QueuedToVerify,
+      ];
+      result = result.filter(torrent => activeStatuses.includes(torrent.status));
     }
 
     // Sorting
@@ -72,7 +86,7 @@ function Main() {
     });
 
     return sortedResult;
-  }, [searchTerm, filterStatus, sortBy, torrents, fuse]);
+  }, [searchTerm, filterStatus, showOnlyActive, sortBy, torrents, fuse]);
 
   return (
     <div className="App">
@@ -80,9 +94,11 @@ function Main() {
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
         filterStatus={filterStatus}
-        onFilterStatusChange={(status) => setFilterStatus(status)}
+        onFilterStatusChange={setFilterStatus}
         sortBy={sortBy}
         onSortByChange={setSortBy}
+        showOnlyActive={showOnlyActive}
+        onShowOnlyActiveChange={setShowOnlyActive}
       />
       <TorrentList torrents={processedTorrents} isLoading={isLoading} error={error} />
     </div>

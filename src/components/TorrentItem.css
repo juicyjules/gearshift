@@ -83,3 +83,32 @@
 .torrent-stats span {
   padding: 2px 0;
 }
+
+.torrent-item-container {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background-color: #fff;
+}
+
+.torrent-item {
+  cursor: pointer;
+  padding: 1rem;
+}
+
+.torrent-details {
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+  background-color: #f8f9fa;
+}
+
+.loading-indicator, .error-message {
+  padding: 1rem;
+  text-align: center;
+  color: var(--subtle-text-color);
+}
+
+.error-message {
+  color: var(--error-color);
+}

@@ -1,15 +1,14 @@
-import React from 'react';
-import { type Torrent, TorrentStatus } from "../transmission-rpc/types";
+import React, { useState } from 'react';
+import { TorrentStatus } from '../transmission-rpc/types';
 import './TorrentItem.css';
 import type { TorrentOverview } from '../entities/TorrentOverview';
+import { useTransmission } from '../contexts/TransmissionContext';
+import { TorrentDetailFields, type TorrentDetails } from '../entities/TorrentDetails';
+import TorrentDetailView from './TorrentDetailView';
 
 // --- Helper Functions (with types) ---
 
-/**
- * Converts a TorrentStatus enum into a readable string.
- */
 const getTorrentStatusText = (status: TorrentStatus): string => {
-  // Using a map is a clean alternative to a switch statement in TS
   const statusMap: Record<TorrentStatus, string> = {
     [TorrentStatus.Stopped]: 'Stopped',
     [TorrentStatus.QueuedToVerify]: 'Check wait',
@@ -22,9 +21,6 @@ const getTorrentStatusText = (status: TorrentStatus): string => {
   return statusMap[status] || 'Unknown';
 };
 
-/**
- * Formats bytes into KB, MB, GB, etc.
- */
 const formatBytes = (bytes: number, decimals: number = 2): string => {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
@@ -34,9 +30,6 @@ const formatBytes = (bytes: number, decimals: number = 2): string => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };
 
-/**
- * Formats ETA from seconds into a more readable string.
- */
 const formatEta = (eta: number): string => {
   if (eta < 0) return '∞';
   if (eta === 0) return 'Done';
@@ -53,7 +46,6 @@ const formatEta = (eta: number): string => {
   return parts.join(' ') || '< 1m';
 };
 
-
 // --- The Main Component ---
 
 interface TorrentItemProps {
@@ -61,6 +53,12 @@ interface TorrentItemProps {
 }
 
 const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
+  const { transmission } = useTransmission();
+  const [isOpen, setIsOpen] = useState(false);
+  const [details, setDetails] = useState<TorrentDetails | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const {
     name,
     status,
@@ -77,37 +75,66 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
   const progressPercent = (percentDone * 100).toFixed(2);
   const statusText = getTorrentStatusText(status);
 
+  const handleToggle = async () => {
+    setIsOpen(!isOpen);
+    if (!details && !isLoading) {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await transmission.torrents({
+          ids: [torrent.id],
+          fields: TorrentDetailFields,
+        });
+        if (response.torrents && response.torrents.length > 0) {
+          setDetails(response.torrents[0] as TorrentDetails);
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch details');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
-    <div className={`torrent-item status-${statusText.toLowerCase().replace(' ', '-')}`}>
-      <h3 className="torrent-name">{name}</h3>
-      
-      {errorString && <p className="torrent-error">Error: {errorString}</p>}
-
-      <div className="progress-bar">
-        <div 
-          className="progress-bar-inner" 
-          style={{ width: `${progressPercent}%` }} 
-        />
-      </div>
-
-      <div className="torrent-status-line">
-        <span>{statusText} ({progressPercent}%)</span>
-        <span>{formatBytes(totalSize)}</span>
-      </div>
-
-      <div className="torrent-stats">
-        <div>
-          <span>↓ {formatBytes(rateDownload)}/s</span>
-          <span>↑ {formatBytes(rateUpload)}/s</span>
+    <div className={`torrent-item-container`}>
+      <div
+        className={`torrent-item status-${statusText.toLowerCase().replace(' ', '-')}`}
+        onClick={handleToggle}
+      >
+        <h3 className="torrent-name">{name}</h3>
+        {errorString && <p className="torrent-error">Error: {errorString}</p>}
+        <div className="progress-bar">
+          <div
+            className="progress-bar-inner"
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
-        <div>
-          <span>ETA: {status === TorrentStatus.Downloading ? "Coming" : 'N/A'}</span>
-          <span>Ratio: {uploadRatio.toFixed(2)}</span>
+        <div className="torrent-status-line">
+          <span>{statusText} ({progressPercent}%)</span>
+          <span>{formatBytes(totalSize)}</span>
         </div>
-        <div>
-          <span>Peers: {peersSendingToUs} / {peersGettingFromUs}</span>
+        <div className="torrent-stats">
+          <div>
+            <span>↓ {formatBytes(rateDownload)}/s</span>
+            <span>↑ {formatBytes(rateUpload)}/s</span>
+          </div>
+          <div>
+            <span>ETA: {status === TorrentStatus.Downloading ? formatEta(torrent.eta) : 'N/A'}</span>
+            <span>Ratio: {uploadRatio.toFixed(2)}</span>
+          </div>
+          <div>
+            <span>Peers: {peersSendingToUs} / {peersGettingFromUs}</span>
+          </div>
         </div>
       </div>
+      {isOpen && (
+        <div className="torrent-details">
+          {isLoading && <div className="loading-indicator">Loading details...</div>}
+          {error && <div className="error-message">{error}</div>}
+          {details && <TorrentDetailView torrent={details} />}
+        </div>
+      )}
     </div>
   );
 };

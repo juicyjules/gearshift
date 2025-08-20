@@ -120,7 +120,7 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
             <span>↑ {formatBytes(rateUpload)}/s</span>
           </div>
           <div>
-            <span>ETA: {status === TorrentStatus.Downloading ? formatEta(torrent.eta) : 'N/A'}</span>
+            <span>ETA: {formatEta(torrent.eta)}</span>
             <span>Ratio: {uploadRatio.toFixed(2)}</span>
           </div>
           <div>
@@ -128,13 +128,11 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
           </div>
         </div>
       </div>
-      {isOpen && (
-        <div className="torrent-details">
-          {isLoading && <div className="loading-indicator">Loading details...</div>}
-          {error && <div className="error-message">{error}</div>}
-          {details && <TorrentDetailView torrent={details} />}
-        </div>
-      )}
+      <div className={`torrent-details ${isOpen ? 'open' : ''}`}>
+        {isLoading && <div className="loading-indicator">Loading details...</div>}
+        {error && <div className="error-message">{error}</div>}
+        {details && <TorrentDetailView torrent={details} />}
+      </div>
     </div>
   );
 };

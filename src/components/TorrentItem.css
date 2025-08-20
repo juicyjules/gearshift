@@ -98,9 +98,20 @@
 }
 
 .torrent-details {
-  padding: 1rem;
-  border-top: 1px solid var(--border-color);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out, padding 0.5s ease-in-out;
+  padding: 0 1rem;
+  border-top: 1px solid transparent;
   background-color: #f8f9fa;
+}
+
+.torrent-details.open {
+  max-height: 1000px; /* Adjust as needed */
+  opacity: 1;
+  padding: 1rem;
+  border-top-color: var(--border-color);
 }
 
 .loading-indicator, .error-message {

@@ -11,8 +11,14 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
 
+}
+#root {
+    width:100vw;
+    height: 100vh;
+    padding:2em;
+    box-sizing: border-box;
+}
 a {
   font-weight: 500;
   color: #646cff;
@@ -26,7 +32,8 @@ body {
   margin: 0;
   display: flex;
   place-items: center;
-  min-width: 320px;
+  min-width: 100vw;
+  width:100vw;
   min-height: 100vh;
 }
 

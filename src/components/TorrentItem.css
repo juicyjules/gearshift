@@ -10,39 +10,54 @@
 }
 
 .torrent-item {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #fff;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
   padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  flex-wrap: wrap;
+}
+
+.torrent-main-info {
+  flex-grow: 1;
+  min-width: 300px;
 }
 
 .torrent-name {
   margin-top: 0;
-  margin-bottom: 0.75rem;
-  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
   color: var(--text-color);
   word-break: break-all;
 }
 
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background-color: var(--progress-bg);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.3rem;
+}
+
+.torrent-sub-info {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--subtle-text-color);
+}
+
 .torrent-error {
+  width: 100%;
+  margin-top: 0.5rem;
   color: var(--error-color);
   font-size: 0.9rem;
   background-color: #f8d7da;
   border: 1px solid #f5c2c7;
   border-radius: 4px;
   padding: 0.5rem;
-}
-
-.progress-bar {
-  width: 100%;
-  height: 10px;
-  background-color: var(--progress-bg);
-  border-radius: 5px;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
 }
 
 .progress-bar-inner {
@@ -59,29 +74,19 @@
   background-color: var(--progress-bar-stopped);
 }
 
-.torrent-status-line {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-  color: var(--subtle-text-color);
-  margin-bottom: 0.75rem;
-}
-
 .torrent-stats {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  font-size: 0.9rem;
+  gap: 1rem;
+  font-size: 0.85rem;
   color: var(--text-color);
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
-.torrent-stats > div {
+.torrent-stats .stat {
   display: flex;
-  flex-direction: column;
-}
-
-.torrent-stats span {
-  padding: 2px 0;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .torrent-item-container {
@@ -90,11 +95,7 @@
   margin-bottom: 1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   background-color: #fff;
-}
-
-.torrent-item {
-  cursor: pointer;
-  padding: 1rem;
+  overflow: hidden;
 }
 
 .torrent-details {

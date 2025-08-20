@@ -26,11 +26,21 @@
   border: 1px solid #e9ecef;
 }
 
+.detail-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.detail-item-header .icon {
+  color: #6c757d;
+}
+
 .detail-label {
   font-weight: 600;
   font-size: 0.8rem;
   color: #6c757d;
-  margin-bottom: 0.25rem;
 }
 
 .detail-value {

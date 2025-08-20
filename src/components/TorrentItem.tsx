@@ -102,31 +102,28 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
         className={`torrent-item status-${statusText.toLowerCase().replace(' ', '-')}`}
         onClick={handleToggle}
       >
-        <h3 className="torrent-name">{name}</h3>
-        {errorString && <p className="torrent-error">Error: {errorString}</p>}
-        <div className="progress-bar">
-          <div
-            className="progress-bar-inner"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-        <div className="torrent-status-line">
-          <span>{statusText} ({progressPercent}%)</span>
-          <span>{formatBytes(totalSize)}</span>
+        <div className="torrent-main-info">
+          <h3 className="torrent-name">{name}</h3>
+          <div className="progress-bar">
+            <div
+              className="progress-bar-inner"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <div className="torrent-sub-info">
+            <span>{statusText}</span>
+            <span>{progressPercent}%</span>
+            <span>{formatBytes(totalSize)}</span>
+          </div>
         </div>
         <div className="torrent-stats">
-          <div>
-            <span>↓ {formatBytes(rateDownload)}/s</span>
-            <span>↑ {formatBytes(rateUpload)}/s</span>
-          </div>
-          <div>
-            <span>ETA: {formatEta(torrent.eta)}</span>
-            <span>Ratio: {uploadRatio.toFixed(2)}</span>
-          </div>
-          <div>
-            <span>Peers: {peersSendingToUs} / {peersGettingFromUs}</span>
-          </div>
+          <span className="stat">↓ {formatBytes(rateDownload)}/s</span>
+          <span className="stat">↑ {formatBytes(rateUpload)}/s</span>
+          <span className="stat">ETA: {formatEta(torrent.eta)}</span>
+          <span className="stat">Ratio: {uploadRatio.toFixed(2)}</span>
+          <span className="stat">Peers: {peersSendingToUs}/{peersGettingFromUs}</span>
         </div>
+        {errorString && <p className="torrent-error">Error: {errorString}</p>}
       </div>
       <div className={`torrent-details ${isOpen ? 'open' : ''}`}>
         {isLoading && <div className="loading-indicator">Loading details...</div>}

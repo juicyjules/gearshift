@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog, FaPlayCircle, FaPauseCircle } from 'react-icons/fa';
 import './Navbar.css';
+import CustomDropdown from './CustomDropdown';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type SessionStatsResponse } from '../transmission-rpc/types';
 
@@ -100,41 +101,29 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
       </div>
       <div className="navbar-right">
         <div className="navbar-controls">
-          <div className="control-group">
-            <FaFilter className="control-icon" />
-            <select
-              className="navbar-select"
-              value={filterStatus}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value === 'all') {
-                  onFilterStatusChange('all');
-                } else {
-                  onFilterStatusChange(parseInt(value, 10) as TorrentStatus);
-                }
-              }}
-            >
-              <option value="all">All Statuses</option>
-              {Object.values(TorrentStatus)
+          <CustomDropdown
+            trigger={<button className="control-button"><FaFilter /></button>}
+            options={[
+              { value: 'all', label: 'All Statuses' },
+              ...Object.values(TorrentStatus)
                 .filter(v => typeof v === 'number')
-                .map((status) => (
-                  <option key={status} value={status}>
-                    {TorrentStatus[status as number]}
-                  </option>
-                ))}
-            </select>
-          </div>
+                .map((status) => ({
+                  value: status as number,
+                  label: TorrentStatus[status as number],
+                }))
+            ]}
+            onSelect={(value) => onFilterStatusChange(value as TorrentStatus | 'all')}
+          />
           <div className="control-group">
-            <FaSort className="control-icon" />
-            <select
-              className="navbar-select"
-              value={sortBy}
-              onChange={(e) => onSortByChange(e.target.value)}
-            >
-              <option value="name">Name</option>
-              <option value="totalSize">Size</option>
-              <option value="percentDone">Progress</option>
-            </select>
+            <CustomDropdown
+              trigger={<button className="control-button"><FaSort /></button>}
+              options={[
+                { value: 'name', label: 'Name' },
+                { value: 'totalSize', label: 'Size' },
+                { value: 'percentDone', label: 'Progress' },
+              ]}
+              onSelect={(value) => onSortByChange(value as string)}
+            />
             <button
               className="sort-direction-button"
               onClick={() => onSortDirectionChange(sortDirection === 'asc' ? 'desc' : 'asc')}

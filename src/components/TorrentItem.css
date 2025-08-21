@@ -35,7 +35,7 @@
 }
 
 .control-button.running {
-  color: #ffc107;
+  color: var(--error-color);
 }
 
 .control-button.paused {
@@ -120,6 +120,8 @@
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  min-width: 120px;
+  justify-content: flex-end;
 }
 
 .stat-download {

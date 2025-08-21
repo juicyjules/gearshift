@@ -117,11 +117,11 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
           </div>
         </div>
         <div className="torrent-stats">
-          <span className="stat">↓ {formatBytes(rateDownload)}/s</span>
-          <span className="stat">↑ {formatBytes(rateUpload)}/s</span>
+          <span className="stat stat-download">↓ {formatBytes(rateDownload)}/s</span>
+          <span className="stat stat-upload">↑ {formatBytes(rateUpload)}/s</span>
           <span className="stat">ETA: {formatEta(torrent.eta)}</span>
           <span className="stat">Ratio: {uploadRatio.toFixed(2)}</span>
-          <span className="stat">Peers: {peersSendingToUs}/{peersGettingFromUs}</span>
+          <span className="stat">Peers: <span className="stat-download">{peersGettingFromUs}</span>/<span className="stat-upload">{peersSendingToUs}</span></span>
         </div>
         {errorString && <p className="torrent-error">Error: {errorString}</p>}
       </div>

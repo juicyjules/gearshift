@@ -89,6 +89,16 @@
   gap: 0.3rem;
 }
 
+.stat-download {
+  color: var(--error-color);
+  font-weight: 600;
+}
+
+.stat-upload {
+  color: var(--progress-bar-seeding);
+  font-weight: 600;
+}
+
 .torrent-item-container {
   border: 1px solid var(--border-color);
   border-radius: 8px;

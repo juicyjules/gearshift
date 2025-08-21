@@ -45,6 +45,12 @@
 .App {
   width:100%;
   display: flex;
-  justify-items: center;
-  align-items: center;
+  flex-direction: column;
+}
+
+.app-container {
+  padding: 0 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }

@@ -106,7 +106,9 @@ function Main() {
         showOnlyActive={showOnlyActive}
         onShowOnlyActiveChange={setShowOnlyActive}
       />
-      <TorrentList torrents={processedTorrents} isLoading={isLoading} error={error} />
+      <div className="app-container">
+        <TorrentList torrents={processedTorrents} isLoading={isLoading} error={error} />
+      </div>
     </div>
   );
 }

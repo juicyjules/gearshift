@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort } from 'react-icons/fa';
+import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog } from 'react-icons/fa';
 import './Navbar.css';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type SessionStatsResponse } from '../transmission-rpc/types';
@@ -27,6 +27,7 @@ interface NavbarProps {
   onSortDirectionChange: (direction: SortDirection) => void;
   showOnlyActive: boolean;
   onShowOnlyActiveChange: (show: boolean) => void;
+  onSettingsClick: () => void;
 }
 
 const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
@@ -40,6 +41,7 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
   onSortDirectionChange,
   showOnlyActive,
   onShowOnlyActiveChange,
+  onSettingsClick,
 }, ref) => {
   const { transmission } = useTransmission();
   const [stats, setStats] = useState<SessionStatsResponse | null>(null);
@@ -145,6 +147,9 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
             </>
           )}
         </div>
+        <button className="settings-button" onClick={onSettingsClick}>
+          <FaCog />
+        </button>
       </div>
     </header>
   );

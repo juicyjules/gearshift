@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import TorrentList from './TorrentList';
 import Navbar from './Navbar';
+import SettingsModal from './SettingsModal';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentOverview, TorrentOverviewFields } from '../entities/TorrentOverview';
 import Fuse from 'fuse.js';
@@ -19,6 +20,7 @@ function Main() {
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -126,10 +128,12 @@ function Main() {
         onSortDirectionChange={setSortDirection}
         showOnlyActive={showOnlyActive}
         onShowOnlyActiveChange={setShowOnlyActive}
+        onSettingsClick={() => setIsSettingsOpen(true)}
       />
       <div className="app-container">
         <TorrentList torrents={processedTorrents} isLoading={isLoading} error={error} />
       </div>
+      {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
     </div>
   );
 }

@@ -7,6 +7,8 @@ import Fuse from 'fuse.js';
 
 import { TorrentStatus } from '../transmission-rpc/types';
 
+type SortDirection = 'asc' | 'desc';
+
 function Main() {
   const { transmission } = useTransmission();
   const [torrents, setTorrents] = useState<TorrentOverview[]>([]);
@@ -14,6 +16,7 @@ function Main() {
   const [filterStatus, setFilterStatus] = useState<TorrentStatus | 'all'>('all');
   const [showOnlyActive, setShowOnlyActive] = useState(false);
   const [sortBy, setSortBy] = useState('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -73,20 +76,21 @@ function Main() {
 
     // Sorting
     const sortedResult = [...result].sort((a, b) => {
+      const dir = sortDirection === 'asc' ? 1 : -1;
       switch (sortBy) {
         case 'name':
-          return a.name.localeCompare(b.name);
+          return a.name.localeCompare(b.name) * dir;
         case 'totalSize':
-          return b.totalSize - a.totalSize;
+          return (a.totalSize - b.totalSize) * dir;
         case 'percentDone':
-          return b.percentDone - a.percentDone;
+          return (a.percentDone - b.percentDone) * dir;
         default:
           return 0;
       }
     });
 
     return sortedResult;
-  }, [searchTerm, filterStatus, showOnlyActive, sortBy, torrents, fuse]);
+  }, [searchTerm, filterStatus, showOnlyActive, sortBy, sortDirection, torrents, fuse]);
 
   return (
     <div className="App">
@@ -97,6 +101,8 @@ function Main() {
         onFilterStatusChange={setFilterStatus}
         sortBy={sortBy}
         onSortByChange={setSortBy}
+        sortDirection={sortDirection}
+        onSortDirectionChange={setSortDirection}
         showOnlyActive={showOnlyActive}
         onShowOnlyActiveChange={setShowOnlyActive}
       />

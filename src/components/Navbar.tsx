@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
+import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort } from 'react-icons/fa';
 import './Navbar.css';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type SessionStatsResponse } from '../transmission-rpc/types';
@@ -14,6 +14,7 @@ const formatBytes = (bytes: number, decimals: number = 2): string => {
 };
 
 import { TorrentStatus } from '../transmission-rpc/types';
+import { type SortDirection } from './Main';
 
 interface NavbarProps {
   searchTerm: string;
@@ -22,6 +23,8 @@ interface NavbarProps {
   onFilterStatusChange: (status: TorrentStatus | 'all') => void;
   sortBy: string;
   onSortByChange: (sortBy: string) => void;
+  sortDirection: SortDirection;
+  onSortDirectionChange: (direction: SortDirection) => void;
   showOnlyActive: boolean;
   onShowOnlyActiveChange: (show: boolean) => void;
 }
@@ -33,6 +36,8 @@ const Navbar: React.FC<NavbarProps> = ({
   onFilterStatusChange,
   sortBy,
   onSortByChange,
+  sortDirection,
+  onSortDirectionChange,
   showOnlyActive,
   onShowOnlyActiveChange,
 }) => {
@@ -80,36 +85,48 @@ const Navbar: React.FC<NavbarProps> = ({
       </div>
       <div className="navbar-right">
         <div className="navbar-controls">
-          <select
-            className="navbar-select"
-            value={filterStatus}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === 'all') {
-                onFilterStatusChange('all');
-              } else {
-                onFilterStatusChange(parseInt(value, 10) as TorrentStatus);
-              }
-            }}
-          >
-            <option value="all">All Statuses</option>
-            {Object.values(TorrentStatus)
-              .filter(v => typeof v === 'number')
-              .map((status) => (
-                <option key={status} value={status}>
-                  {TorrentStatus[status as number]}
-                </option>
-              ))}
-          </select>
-          <select
-            className="navbar-select"
-            value={sortBy}
-            onChange={(e) => onSortByChange(e.target.value)}
-          >
-            <option value="name">Sort by Name</option>
-            <option value="totalSize">Sort by Size</option>
-            <option value="percentDone">Sort by Progress</option>
-          </select>
+          <div className="control-group">
+            <FaFilter className="control-icon" />
+            <select
+              className="navbar-select"
+              value={filterStatus}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === 'all') {
+                  onFilterStatusChange('all');
+                } else {
+                  onFilterStatusChange(parseInt(value, 10) as TorrentStatus);
+                }
+              }}
+            >
+              <option value="all">All Statuses</option>
+              {Object.values(TorrentStatus)
+                .filter(v => typeof v === 'number')
+                .map((status) => (
+                  <option key={status} value={status}>
+                    {TorrentStatus[status as number]}
+                  </option>
+                ))}
+            </select>
+          </div>
+          <div className="control-group">
+            <FaSort className="control-icon" />
+            <select
+              className="navbar-select"
+              value={sortBy}
+              onChange={(e) => onSortByChange(e.target.value)}
+            >
+              <option value="name">Name</option>
+              <option value="totalSize">Size</option>
+              <option value="percentDone">Progress</option>
+            </select>
+            <button
+              className="sort-direction-button"
+              onClick={() => onSortDirectionChange(sortDirection === 'asc' ? 'desc' : 'asc')}
+            >
+              {sortDirection === 'asc' ? <FaSortAmountUp /> : <FaSortAmountDown />}
+            </button>
+          </div>
         </div>
         <div className="navbar-stats">
           {isLoading && <span>Loading...</span>}

@@ -1,0 +1,29 @@
+.ratio-circle {
+  transform: rotate(-90deg);
+}
+
+.circle-background,
+.circle-progress {
+  fill: none;
+}
+
+.circle-background {
+  stroke: #e9ecef;
+}
+
+.circle-progress.circle-red {
+  stroke: #dc3545;
+}
+
+.circle-progress.circle-green {
+  stroke: #198754;
+  transition: stroke-dashoffset 0.3s ease;
+}
+
+.circle-text {
+  font-size: 8px;
+  font-weight: 600;
+  fill: #212529;
+  transform: rotate(90deg);
+  transform-origin: center;
+}

@@ -5,6 +5,7 @@ import type { TorrentOverview } from '../entities/TorrentOverview';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { TorrentDetailFields, type TorrentDetails } from '../entities/TorrentDetails';
 import TorrentDetailView from './TorrentDetailView';
+import RatioCircle from './RatioCircle';
 
 // --- Helper Functions (with types) ---
 
@@ -120,7 +121,7 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
           <span className="stat stat-download">↓ {formatBytes(rateDownload)}/s</span>
           <span className="stat stat-upload">↑ {formatBytes(rateUpload)}/s</span>
           <span className="stat">ETA: {formatEta(torrent.eta)}</span>
-          <span className="stat">Ratio: {uploadRatio.toFixed(2)}</span>
+          <RatioCircle ratio={uploadRatio} />
           <span className="stat">Peers: <span className="stat-download">{peersGettingFromUs}</span>/<span className="stat-upload">{peersSendingToUs}</span></span>
         </div>
         {errorString && <p className="torrent-error">Error: {errorString}</p>}

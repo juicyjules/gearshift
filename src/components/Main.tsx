@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import TorrentList from './TorrentList';
 import Navbar from './Navbar';
 import { useTransmission } from '../contexts/TransmissionContext';
@@ -19,6 +19,7 @@ function Main() {
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!transmission) return;
@@ -42,6 +43,25 @@ function Main() {
 
     return () => clearInterval(intervalId);
   }, [transmission, torrents.length]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        (event.target as HTMLElement).tagName.toLowerCase() !== 'input' &&
+        (event.target as HTMLElement).tagName.toLowerCase() !== 'textarea' &&
+        !event.metaKey && !event.ctrlKey && !event.altKey
+      ) {
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const fuse = useMemo(() => new Fuse(torrents, {
     keys: ['name'],
@@ -95,6 +115,7 @@ function Main() {
   return (
     <div className="App">
       <Navbar
+        ref={searchInputRef}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
         filterStatus={filterStatus}

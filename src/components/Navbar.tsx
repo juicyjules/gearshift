@@ -29,7 +29,7 @@ interface NavbarProps {
   onShowOnlyActiveChange: (show: boolean) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({
+const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
   searchTerm,
   onSearchTermChange,
   filterStatus,
@@ -40,7 +40,7 @@ const Navbar: React.FC<NavbarProps> = ({
   onSortDirectionChange,
   showOnlyActive,
   onShowOnlyActiveChange,
-}) => {
+}, ref) => {
   const { transmission } = useTransmission();
   const [stats, setStats] = useState<SessionStatsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,6 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({
         </div>
         <div className="navbar-search">
           <input
+            ref={ref}
             type="text"
             placeholder="Search torrents..."
             value={searchTerm}
@@ -147,6 +148,6 @@ const Navbar: React.FC<NavbarProps> = ({
       </div>
     </header>
   );
-};
+});
 
 export default Navbar;

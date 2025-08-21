@@ -1,0 +1,130 @@
+.torrent-detail-view {
+  padding: 1rem;
+  background-color: #f8f9fa;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.detail-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.detail-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.detail-item-header .icon {
+  color: #6c757d;
+}
+
+.detail-label {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.detail-value {
+  font-size: 0.95rem;
+  color: #212529;
+  word-break: break-all;
+}
+
+.location-path {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+}
+
+.detail-section {
+  margin-bottom: 1.5rem;
+}
+
+.detail-section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.25rem;
+}
+
+.detail-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.detail-list li {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.detail-list li:last-child {
+  border-bottom: none;
+}
+
+.file-list span {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.magnet-section .detail-section-title {
+    border-bottom: none;
+}
+.magnet-link-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  background-color: #e9ecef;
+  cursor: pointer;
+}
+
+.expand-button {
+  width: 100%;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  color: #0d6efd;
+  font-weight: 600;
+}
+
+.expand-button:hover {
+  background-color: #e9ecef;
+}

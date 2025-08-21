@@ -9,6 +9,39 @@
   --error-color: #dc3545;
 }
 
+.torrent-controls {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.control-button {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.control-button:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.control-button.running {
+  color: #ffc107;
+}
+
+.control-button.paused {
+  color: #198754;
+}
+
 .torrent-item {
   display: flex;
   justify-content: space-between;

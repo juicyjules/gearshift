@@ -114,6 +114,26 @@ function Main() {
     return sortedResult;
   }, [searchTerm, filterStatus, showOnlyActive, sortBy, sortDirection, torrents, fuse]);
 
+  const handleStartAll = async () => {
+    if (!transmission) return;
+    const ids = processedTorrents.map(t => t.id);
+    try {
+      await transmission.start(ids);
+    } catch (err) {
+      console.error('Failed to start all torrents:', err);
+    }
+  };
+
+  const handleStopAll = async () => {
+    if (!transmission) return;
+    const ids = processedTorrents.map(t => t.id);
+    try {
+      await transmission.stop(ids);
+    } catch (err) {
+      console.error('Failed to stop all torrents:', err);
+    }
+  };
+
   return (
     <div className="App">
       <Navbar
@@ -129,6 +149,8 @@ function Main() {
         showOnlyActive={showOnlyActive}
         onShowOnlyActiveChange={setShowOnlyActive}
         onSettingsClick={() => setIsSettingsOpen(true)}
+        onStartAll={handleStartAll}
+        onStopAll={handleStopAll}
       />
       <div className="app-container">
         <TorrentList torrents={processedTorrents} isLoading={isLoading} error={error} />

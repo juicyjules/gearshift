@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaPause, FaPlay } from 'react-icons/fa';
 import { TorrentStatus } from '../transmission-rpc/types';
 import './TorrentItem.css';
 import type { TorrentOverview } from '../entities/TorrentOverview';
@@ -97,12 +98,35 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
     }
   };
 
+  const isRunning = status !== TorrentStatus.Stopped;
+
+  const handleStartStopClick = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening the details view
+    if (!transmission) return;
+
+    try {
+      if (isRunning) {
+        await transmission.stop(torrent.id);
+      } else {
+        await transmission.start(torrent.id);
+      }
+    } catch (err: any) {
+      console.error('Failed to start/stop torrent:', err);
+      // Optionally, set an error state to show in the UI
+    }
+  };
+
   return (
     <div className={`torrent-item-container`}>
       <div
         className={`torrent-item status-${statusText.toLowerCase().replace(' ', '-')}`}
         onClick={handleToggle}
       >
+        <div className="torrent-controls">
+          <button className={`control-button ${isRunning ? 'running' : 'paused'}`} onClick={handleStartStopClick}>
+            {isRunning ? <FaPause /> : <FaPlay />}
+          </button>
+        </div>
         <div className="torrent-main-info">
           <h3 className="torrent-name">{name}</h3>
           <div className="progress-bar">

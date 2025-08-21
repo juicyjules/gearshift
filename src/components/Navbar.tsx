@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog } from 'react-icons/fa';
+import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog, FaPlayCircle, FaPauseCircle } from 'react-icons/fa';
 import './Navbar.css';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type SessionStatsResponse } from '../transmission-rpc/types';
@@ -28,6 +28,8 @@ interface NavbarProps {
   showOnlyActive: boolean;
   onShowOnlyActiveChange: (show: boolean) => void;
   onSettingsClick: () => void;
+  onStartAll: () => void;
+  onStopAll: () => void;
 }
 
 const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
@@ -42,6 +44,8 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
   showOnlyActive,
   onShowOnlyActiveChange,
   onSettingsClick,
+  onStartAll,
+  onStopAll,
 }, ref) => {
   const { transmission } = useTransmission();
   const [stats, setStats] = useState<SessionStatsResponse | null>(null);
@@ -75,6 +79,14 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
       <div className="navbar-left">
         <div className="navbar-logo">
           <h1 className="navbar-brand">GEARSHIFT</h1>
+        </div>
+        <div className="global-controls">
+          <button className="global-control-button" onClick={onStartAll} title="Start all filtered torrents">
+            <FaPlayCircle />
+          </button>
+          <button className="global-control-button" onClick={onStopAll} title="Stop all filtered torrents">
+            <FaPauseCircle />
+          </button>
         </div>
         <div className="navbar-search">
           <input

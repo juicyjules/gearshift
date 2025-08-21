@@ -1,5 +1,6 @@
 import React from 'react';
 import TorrentItem from './TorrentItem';
+import './TorrentList.css';
 import { type TorrentOverview } from '../entities/TorrentOverview';
 
 interface TorrentListProps {
@@ -22,12 +23,10 @@ const TorrentList: React.FC<TorrentListProps> = ({ torrents, isLoading, error })
   }
 
   return (
-    <div>
-      <div>
-        {torrents.map((torrent) => (
-          <TorrentItem key={torrent.id} torrent={torrent} />
-        ))}
-      </div>
+    <div className="torrent-list">
+      {torrents.map((torrent) => (
+        <TorrentItem key={torrent.id} torrent={torrent} />
+      ))}
     </div>
   );
 };

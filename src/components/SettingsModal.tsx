@@ -33,16 +33,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     fetchSettings();
   }, [transmission]);
 
-  const handleSave = async () => {
-    if (!transmission || !settings) return;
-    try {
-      await transmission.setSession(settings);
-      onClose();
-    } catch (err: any) {
-      setError(err.message || 'Failed to save settings');
-    }
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     if (settings) {
@@ -108,8 +98,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
           </div>
         </div>
         <div className="modal-footer">
+          <span className="wip-notice">Saving settings is a work in progress.</span>
           <button className="cancel-button" onClick={onClose}>Cancel</button>
-          <button className="save-button" onClick={handleSave}>Save</button>
+          <button className="save-button" disabled>Save</button>
         </div>
       </div>
     </div>

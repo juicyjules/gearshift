@@ -7,7 +7,7 @@ interface RatioCircleProps {
   strokeWidth?: number;
 }
 
-const RatioCircle: React.FC<RatioCircleProps> = ({ ratio, size = 24, strokeWidth = 3 }) => {
+const RatioCircle: React.FC<RatioCircleProps> = ({ ratio, size = 36, strokeWidth = 4 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
 

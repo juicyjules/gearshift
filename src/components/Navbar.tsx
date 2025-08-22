@@ -70,7 +70,7 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
     };
 
     fetchStats();
-    const intervalId = setInterval(fetchStats, 2000); // Refresh every 2 seconds
+    const intervalId = setInterval(fetchStats, 5000); // Refresh every 5 seconds
 
     return () => clearInterval(intervalId);
   }, [transmission, stats]);

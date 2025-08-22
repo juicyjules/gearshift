@@ -1,6 +1,6 @@
 :root {
   --progress-bg: #e9ecef;
-  --progress-bar-downloading: #0d6efd;
+  --progress-bar-downloading: #198754;
   --progress-bar-seeding: #198754;
   --progress-bar-stopped: #6c757d;
   --border-color: #dee2e6;
@@ -125,12 +125,12 @@
 }
 
 .stat-download {
-  color: var(--error-color);
+  color: var(--progress-bar-seeding);
   font-weight: 600;
 }
 
 .stat-upload {
-  color: var(--progress-bar-seeding);
+  color: var(--error-color);
   font-weight: 600;
 }
 

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FaBox, FaChartLine, FaDownload, FaUpload, FaCalendarAlt,
   FaUser, FaFolder, FaComment, FaFile, FaLink, FaChevronDown, FaChevronUp
 } from 'react-icons/fa';
+import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentDetails } from '../entities/TorrentDetails';
 import './TorrentDetailView.css';
 
@@ -36,9 +37,52 @@ interface TorrentDetailViewProps {
 }
 
 const TorrentDetailView: React.FC<TorrentDetailViewProps> = ({ torrent }) => {
+  const { transmission } = useTransmission();
   const [filesExpanded, setFilesExpanded] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<boolean[]>([]);
+
   const files = torrent.files || [];
+  const fileStats = torrent.fileStats || [];
   const filesToShow = filesExpanded ? files : files.slice(0, 5);
+
+  useEffect(() => {
+    if (fileStats.length > 0) {
+      setSelectedFiles(fileStats.map(stat => stat.wanted));
+    }
+  }, [fileStats]);
+
+  const handleFileCheck = (index: number, checked: boolean) => {
+    const newSelectedFiles = [...selectedFiles];
+    newSelectedFiles[index] = checked;
+    setSelectedFiles(newSelectedFiles);
+  };
+
+  const handleApplyChanges = async () => {
+    if (!transmission) return;
+
+    const filesWanted: number[] = [];
+    const filesUnwanted: number[] = [];
+
+    selectedFiles.forEach((wanted, index) => {
+      if (wanted !== fileStats[index].wanted) {
+        if (wanted) {
+          filesWanted.push(index);
+        } else {
+          filesUnwanted.push(index);
+        }
+      }
+    });
+
+    try {
+      await transmission.set({
+        ids: [torrent.id],
+        filesWanted,
+        filesUnwanted,
+      });
+    } catch (err) {
+      console.error('Failed to update file selection:', err);
+    }
+  };
 
   return (
     <div className="torrent-detail-view">
@@ -65,11 +109,21 @@ const TorrentDetailView: React.FC<TorrentDetailViewProps> = ({ torrent }) => {
 
       <div className="detail-columns">
         <div className="detail-section">
-          <h5 className="detail-section-title">Files ({files.length})</h5>
+          <div className="file-list-header">
+            <h5 className="detail-section-title">Files ({files.length})</h5>
+            <button className="apply-button" onClick={handleApplyChanges}>Apply Changes</button>
+          </div>
           <ul className="detail-list file-list">
             {filesToShow.map((file, index) => (
               <li key={index}>
-                {file.name} <span>({formatBytes(file.length)})</span>
+                <input
+                  type="checkbox"
+                  id={`file-${index}`}
+                  checked={selectedFiles[index] ?? false}
+                  onChange={(e) => handleFileCheck(index, e.target.checked)}
+                />
+                <label htmlFor={`file-${index}`}>{file.name}</label>
+                <span>({formatBytes(file.length)})</span>
               </li>
             ))}
           </ul>

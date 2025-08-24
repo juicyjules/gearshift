@@ -61,6 +61,7 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
       if (!stats) setIsLoading(true);
       try {
         const response = await transmission.stats();
+        console.log(response)
         setStats(response);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch session stats');
@@ -70,10 +71,9 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
     };
 
     fetchStats();
-    const intervalId = setInterval(fetchStats, 5000); // Refresh every 5 seconds
-
+    const intervalId = setInterval(fetchStats, 1000); // Refresh every 5 seconds
     return () => clearInterval(intervalId);
-  }, [transmission, stats]);
+  }, [transmission]);
 
   return (
     <header className="navbar">

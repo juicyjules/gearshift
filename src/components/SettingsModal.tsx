@@ -22,7 +22,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     const fetchSettings = async () => {
       setIsLoading(true);
       try {
-        const response = await transmission.getSession();
+        const response = await transmission.session();
         setSettings(response);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch settings');

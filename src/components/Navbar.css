@@ -10,6 +10,7 @@
   backdrop-filter: blur(10px);
   border-bottom: 1px solid #e9ecef;
   margin-bottom: 1.5rem;
+  max-width:100vw;
 }
 
 @media (max-width: 768px) {
@@ -57,7 +58,8 @@
   border: 1px solid #ced4da;
   border-radius: 6px;
   font-size: 0.9rem;
-  width: 250px;
+  max-width: 220px;
+  min-width:125px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -177,4 +179,8 @@
 .settings-button:hover {
   background-color: #f8f9fa;
   color: #212529;
+}
+
+.stat-active {
+  white-space:nowrap;
 }

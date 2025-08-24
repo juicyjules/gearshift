@@ -55,10 +55,9 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
 
   useEffect(() => {
     if (!transmission) return;
-
+    if (!stats) setIsLoading(true);
     const fetchStats = async () => {
       // Only set loading on the initial fetch
-      if (!stats) setIsLoading(true);
       try {
         const response = await transmission.stats();
         setStats(response);
@@ -70,8 +69,7 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
     };
 
     fetchStats();
-    const intervalId = setInterval(fetchStats, 5000); // Refresh every 5 seconds
-
+    const intervalId = setInterval(fetchStats, 750); // Refresh every 5 seconds
     return () => clearInterval(intervalId);
   }, [transmission, stats]);
 

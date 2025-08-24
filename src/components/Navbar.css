@@ -30,7 +30,7 @@
 
   .navbar-controls {
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
   }
 
   .navbar-stats {
@@ -93,7 +93,7 @@
 
 .navbar-controls {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   align-items: center;
 }
 
@@ -133,8 +133,8 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  min-width: 100px;
-  justify-content: flex-start;
+  min-width: 5em;
+  justify-content: space-between;
 }
 
 .navbar-stats .stat-active {

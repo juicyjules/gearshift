@@ -1,8 +1,11 @@
+html * {
+    box-sizing: border-box;
+    background-color:red!important;
+}
 #root {
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-  box-sizing: border-box;
   width:100vw;
   min-width:100%;
 }

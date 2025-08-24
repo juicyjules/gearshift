@@ -35,7 +35,7 @@
 }
 
 .control-button.running {
-  color: var(--subtle-text-color);
+  color: var(--error-color);
 }
 
 .control-button.paused {

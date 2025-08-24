@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog, FaPlayCircle, FaPauseCircle } from 'react-icons/fa';
 import './Navbar.css';
+import CustomDropdown from './CustomDropdown';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type SessionStatsResponse } from '../transmission-rpc/types';
 
@@ -13,6 +15,7 @@ const formatBytes = (bytes: number, decimals: number = 2): string => {
 };
 
 import { TorrentStatus } from '../transmission-rpc/types';
+import { type SortDirection } from './Main';
 
 interface NavbarProps {
   searchTerm: string;
@@ -21,16 +24,30 @@ interface NavbarProps {
   onFilterStatusChange: (status: TorrentStatus | 'all') => void;
   sortBy: string;
   onSortByChange: (sortBy: string) => void;
+  sortDirection: SortDirection;
+  onSortDirectionChange: (direction: SortDirection) => void;
+  showOnlyActive: boolean;
+  onShowOnlyActiveChange: (show: boolean) => void;
+  onSettingsClick: () => void;
+  onStartAll: () => void;
+  onStopAll: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({
+const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
   searchTerm,
   onSearchTermChange,
   filterStatus,
   onFilterStatusChange,
   sortBy,
   onSortByChange,
-}) => {
+  sortDirection,
+  onSortDirectionChange,
+  showOnlyActive,
+  onShowOnlyActiveChange,
+  onSettingsClick,
+  onStartAll,
+  onStopAll,
+}, ref) => {
   const { transmission } = useTransmission();
   const [stats, setStats] = useState<SessionStatsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +60,8 @@ const Navbar: React.FC<NavbarProps> = ({
       // Only set loading on the initial fetch
       if (!stats) setIsLoading(true);
       try {
-        const response = await transmission.sessionStats();
+        const response = await transmission.stats();
+        console.log(response)
         setStats(response);
       } catch (err: any) {
         setError(err.message || 'Failed to fetch session stats');
@@ -53,17 +71,27 @@ const Navbar: React.FC<NavbarProps> = ({
     };
 
     fetchStats();
-    const intervalId = setInterval(fetchStats, 2000); // Refresh every 2 seconds
-
+    const intervalId = setInterval(fetchStats, 1000); // Refresh every 5 seconds
     return () => clearInterval(intervalId);
-  }, [transmission, stats]);
+  }, [transmission]);
 
   return (
     <header className="navbar">
       <div className="navbar-left">
-        <h1 className="navbar-brand">GEARSHIFT</h1>
+        <div className="navbar-logo">
+          <h1 className="navbar-brand">GEARSHIFT</h1>
+        </div>
+        <div className="global-controls">
+          <button className="global-control-button" onClick={onStartAll} title="Start all filtered torrents">
+            <FaPlayCircle />
+          </button>
+          <button className="global-control-button" onClick={onStopAll} title="Stop all filtered torrents">
+            <FaPauseCircle />
+          </button>
+        </div>
         <div className="navbar-search">
           <input
+            ref={ref}
             type="text"
             placeholder="Search torrents..."
             value={searchTerm}
@@ -73,51 +101,59 @@ const Navbar: React.FC<NavbarProps> = ({
       </div>
       <div className="navbar-right">
         <div className="navbar-controls">
-          <select
-            className="navbar-select"
-            value={filterStatus}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (value === 'all') {
-                onFilterStatusChange('all');
-              } else {
-                onFilterStatusChange(parseInt(value, 10) as TorrentStatus);
-              }
-            }}
-          >
-            <option value="all">All Statuses</option>
-            {Object.values(TorrentStatus)
-              .filter(v => typeof v === 'number')
-              .map((status) => (
-                <option key={status} value={status}>
-                  {TorrentStatus[status as number]}
-                </option>
-              ))}
-          </select>
-          <select
-            className="navbar-select"
-            value={sortBy}
-            onChange={(e) => onSortByChange(e.target.value)}
-          >
-            <option value="name">Sort by Name</option>
-            <option value="totalSize">Sort by Size</option>
-            <option value="percentDone">Sort by Progress</option>
-          </select>
+          <CustomDropdown
+            trigger={<button className="control-button"><FaFilter /></button>}
+            options={[
+              { value: 'all', label: 'All Statuses' },
+              ...Object.values(TorrentStatus)
+                .filter(v => typeof v === 'number')
+                .map((status) => ({
+                  value: status as number,
+                  label: TorrentStatus[status as number],
+                }))
+            ]}
+            onSelect={(value) => onFilterStatusChange(value as TorrentStatus | 'all')}
+          />
+          <div className="control-group">
+            <CustomDropdown
+              trigger={<button className="control-button"><FaSort /></button>}
+              options={[
+                { value: 'name', label: 'Name' },
+                { value: 'totalSize', label: 'Size' },
+                { value: 'percentDone', label: 'Progress' },
+              ]}
+              onSelect={(value) => onSortByChange(value as string)}
+            />
+            <button
+              className="sort-direction-button"
+              onClick={() => onSortDirectionChange(sortDirection === 'asc' ? 'desc' : 'asc')}
+            >
+              {sortDirection === 'asc' ? <FaSortAmountUp /> : <FaSortAmountDown />}
+            </button>
+          </div>
         </div>
         <div className="navbar-stats">
           {isLoading && <span>Loading...</span>}
           {error && <span className="error-message">{error}</span>}
           {stats && (
             <>
-              <span>↓ {formatBytes(stats.downloadSpeed)}</span>
-              <span>↑ {formatBytes(stats.uploadSpeed)}</span>
-              <span className="stat-active">Active: {stats.activeTorrentCount}</span>
+              <span className="stat-item"><FaArrowDown /> {formatBytes(stats.downloadSpeed)}</span>
+              <span className="stat-item"><FaArrowUp /> {formatBytes(stats.uploadSpeed)}</span>
+              <button
+                className={`stat-active ${showOnlyActive ? 'active' : ''}`}
+                onClick={() => onShowOnlyActiveChange(!showOnlyActive)}
+              >
+                Active: {stats.activeTorrentCount}
+              </button>
             </>
           )}
         </div>
+        <button className="settings-button" onClick={onSettingsClick}>
+          <FaCog />
+        </button>
       </div>
     </header>
   );
-};
+});
 
 export default Navbar;

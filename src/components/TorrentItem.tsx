@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { FaPause, FaPlay } from 'react-icons/fa';
 import { TorrentStatus } from '../transmission-rpc/types';
 import './TorrentItem.css';
 import type { TorrentOverview } from '../entities/TorrentOverview';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { TorrentDetailFields, type TorrentDetails } from '../entities/TorrentDetails';
 import TorrentDetailView from './TorrentDetailView';
+import RatioCircle from './RatioCircle';
 
 // --- Helper Functions (with types) ---
 
@@ -96,37 +98,57 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
     }
   };
 
+  const isRunning = status !== TorrentStatus.Stopped;
+
+  const handleStartStopClick = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent opening the details view
+    if (!transmission) return;
+
+    try {
+      if (isRunning) {
+        await transmission.stop(torrent.id);
+      } else {
+        await transmission.start(torrent.id);
+      }
+    } catch (err: any) {
+      console.error('Failed to start/stop torrent:', err);
+      // Optionally, set an error state to show in the UI
+    }
+  };
+
   return (
     <div className={`torrent-item-container`}>
       <div
         className={`torrent-item status-${statusText.toLowerCase().replace(' ', '-')}`}
         onClick={handleToggle}
       >
-        <h3 className="torrent-name">{name}</h3>
-        {errorString && <p className="torrent-error">Error: {errorString}</p>}
-        <div className="progress-bar">
-          <div
-            className="progress-bar-inner"
-            style={{ width: `${progressPercent}%` }}
-          />
+        <div className="torrent-controls">
+          <button className={`control-button ${isRunning ? 'running' : 'paused'}`} onClick={handleStartStopClick}>
+            {isRunning ? <FaPause /> : <FaPlay />}
+          </button>
         </div>
-        <div className="torrent-status-line">
-          <span>{statusText} ({progressPercent}%)</span>
-          <span>{formatBytes(totalSize)}</span>
+        <div className="torrent-main-info">
+          <h3 className="torrent-name">{name}</h3>
+          <div className="progress-bar">
+            <div
+              className="progress-bar-inner"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <div className="torrent-sub-info">
+            <span>{statusText}</span>
+            <span>{progressPercent}%</span>
+            <span>{formatBytes(totalSize)}</span>
+          </div>
         </div>
         <div className="torrent-stats">
-          <div>
-            <span>↓ {formatBytes(rateDownload)}/s</span>
-            <span>↑ {formatBytes(rateUpload)}/s</span>
-          </div>
-          <div>
-            <span>ETA: {formatEta(torrent.eta)}</span>
-            <span>Ratio: {uploadRatio.toFixed(2)}</span>
-          </div>
-          <div>
-            <span>Peers: {peersSendingToUs} / {peersGettingFromUs}</span>
-          </div>
+          <span className="stat stat-download">↓ {formatBytes(rateDownload)}/s</span>
+          <span className="stat stat-upload">↑ {formatBytes(rateUpload)}/s</span>
+          <span className="stat">ETA: {formatEta(torrent.eta)}</span>
+          <RatioCircle ratio={uploadRatio} />
+          <span className="stat">Peers: <span className="stat-download">{peersGettingFromUs}</span>/<span className="stat-upload">{peersSendingToUs}</span></span>
         </div>
+        {errorString && <p className="torrent-error">Error: {errorString}</p>}
       </div>
       <div className={`torrent-details ${isOpen ? 'open' : ''}`}>
         {isLoading && <div className="loading-indicator">Loading details...</div>}

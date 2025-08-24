@@ -670,3 +670,5 @@ export type TransmissionClientConfig =
   | string
   | URL
   | TransmissionConfig;
+
+export type SessionSetArgs = Partial<GetSessionResponse>;

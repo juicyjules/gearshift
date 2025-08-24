@@ -1,12 +1,43 @@
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1.5rem;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid #e9ecef;
   margin-bottom: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  max-width:100vw;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .navbar-left, .navbar-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .navbar-search input {
+    width: 100%;
+  }
+
+  .navbar-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .navbar-stats {
+    width: 100%;
+    justify-content: space-around;
+  }
 }
 
 .navbar-left, .navbar-right {
@@ -27,7 +58,8 @@
   border: 1px solid #ced4da;
   border-radius: 6px;
   font-size: 0.9rem;
-  width: 250px;
+  max-width: 220px;
+  min-width:125px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
@@ -37,17 +69,57 @@
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
-.navbar-controls {
+.global-controls {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
-.navbar-select {
-  padding: 0.6rem 0.8rem;
+.global-control-button {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.global-control-button:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.navbar-controls {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-direction-button {
+  background: transparent;
   border: 1px solid #ced4da;
   border-radius: 6px;
-  background-color: #fff;
-  font-size: 0.9rem;
+  padding: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.sort-direction-button:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
 }
 
 .navbar-stats {
@@ -59,8 +131,56 @@
   font-weight: 500;
 }
 
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 100px;
+  justify-content: flex-start;
+}
+
 .navbar-stats .stat-active {
-  background-color: #e9ecef;
-  padding: 0.3rem 0.6rem;
-  border-radius: 4px;
+  background-color: transparent;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid #ced4da;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navbar-stats .stat-active:hover {
+  background-color: #f8f9fa;
+  border-color: #adb5bd;
+}
+
+.navbar-stats .stat-active.active {
+  background-color: #e7f5ff;
+  color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.settings-button {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.settings-button:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.stat-active {
+  white-space:nowrap;
 }

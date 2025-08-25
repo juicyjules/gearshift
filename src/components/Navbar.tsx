@@ -20,9 +20,7 @@ import { type SortDirection } from './Main';
 interface NavbarProps {
   searchTerm: string;
   onSearchTermChange: (term: string) => void;
-  filterStatus: TorrentStatus | 'all';
   onFilterStatusChange: (status: TorrentStatus | 'all') => void;
-  sortBy: string;
   onSortByChange: (sortBy: string) => void;
   sortDirection: SortDirection;
   onSortDirectionChange: (direction: SortDirection) => void;
@@ -36,9 +34,7 @@ interface NavbarProps {
 const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
   searchTerm,
   onSearchTermChange,
-  filterStatus,
   onFilterStatusChange,
-  sortBy,
   onSortByChange,
   sortDirection,
   onSortDirectionChange,
@@ -61,8 +57,8 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
       try {
         const response = await transmission.stats();
         setStats(response);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch session stats');
+      } catch {
+        setError('Failed to fetch session stats');
       } finally {
         setIsLoading(false);
       }

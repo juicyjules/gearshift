@@ -1,7 +1,7 @@
 /**
  * Represents the status of a torrent.
  */
-export  enum TorrentStatus {
+export enum TorrentStatus {
   /** Torrent is stopped. */
   Stopped = 0,
   /** Torrent is queued to verify local data. */

@@ -11,6 +11,7 @@ import type {
   SessionStatsResponse,
   Torrent,
   TorrentSetArgs,
+  SessionSetArgs,
   TransmissionClientConfig,
 } from "./types.ts";
 
@@ -115,10 +116,6 @@ export class TransmissionClient {
     } else {
       // Handle configuration object
       const protocol = config.ssl ? "https" : "http";
-      const auth = config.username && config.password
-        ? `${config.username}:${config.password}@`
-        : "";
-
       url = new URL(
         `/transmission/rpc`,
         `${protocol}://${config.host}:${config.port}`,
@@ -138,7 +135,7 @@ export class TransmissionClient {
       return btoa(input);
     }
     // Node provides Buffer
-    // deno-lint-ignore no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const maybeBuffer: any =
       (globalThis as unknown as { Buffer?: unknown }).Buffer;
     if (maybeBuffer && typeof maybeBuffer.from === "function") {
@@ -208,7 +205,7 @@ export class TransmissionClient {
    */
   private async rpc<T>(
     method: string,
-    // deno-lint-ignore no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     args?: { [key: string]: any },
     retryCount: number = 0,
   ): Promise<RPCSuccess<T>["arguments"]> {
@@ -304,8 +301,6 @@ export class TransmissionClient {
       altSpeedTimeEnd,
       altSpeedUp,
       blocklistEnabled,
-      blocklistUrl,
-      cacheSizeMb,
       dhtEnabled,
       downloadDir,
       downloadQueueEnabled,
@@ -316,15 +311,11 @@ export class TransmissionClient {
       incompleteDir,
       incompleteDirEnabled,
       lpdEnabled,
-      peerLimitGlobal,
-      peerLimitPerTorrent,
       peerPort,
       peerPortRandomOnStart,
       pexEnabled,
       portForwardingEnabled,
       queueStalledEnabled,
-      queueStalledMinutes,
-      renamePartialFiles,
       scriptTorrentDoneEnabled,
       scriptTorrentDoneFilename,
       seedQueueEnabled,
@@ -350,27 +341,21 @@ export class TransmissionClient {
       "alt-speed-time-end": altSpeedTimeEnd,
       "alt-speed-up": altSpeedUp,
       "blocklist-enabled": blocklistEnabled,
-      "blocklist-url": blocklistUrl,
-      "cache-size-mb": cacheSizeMb,
       "dht-enabled": dhtEnabled,
       "download-dir": downloadDir,
       "download-queue-enabled": downloadQueueEnabled,
       "download-queue-size": downloadQueueSize,
-      encryption,
+      "encryption": encryption,
       "idle-seeding-limit": idleSeedingLimit,
       "idle-seeding-limit-enabled": idleSeedingLimitEnabled,
       "incomplete-dir": incompleteDir,
       "incomplete-dir-enabled": incompleteDirEnabled,
       "lpd-enabled": lpdEnabled,
-      "peer-limit-global": peerLimitGlobal,
-      "peer-limit-per-torrent": peerLimitPerTorrent,
       "peer-port": peerPort,
       "peer-port-random-on-start": peerPortRandomOnStart,
       "pex-enabled": pexEnabled,
       "port-forwarding-enabled": portForwardingEnabled,
       "queue-stalled-enabled": queueStalledEnabled,
-      "queue-stalled-minutes": queueStalledMinutes,
-      "rename-partial-files": renamePartialFiles,
       "script-torrent-done-enabled": scriptTorrentDoneEnabled,
       "script-torrent-done-filename": scriptTorrentDoneFilename,
       "seed-queue-enabled": seedQueueEnabled,

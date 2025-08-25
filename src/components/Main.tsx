@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import TorrentList from './TorrentList';
 import Navbar from './Navbar';
 import SettingsModal from './SettingsModal';
@@ -8,7 +8,7 @@ import Fuse from 'fuse.js';
 
 import { TorrentStatus } from '../transmission-rpc/types';
 
-type SortDirection = 'asc' | 'desc';
+export type SortDirection = 'asc' | 'desc';
 
 function Main() {
   const { transmission } = useTransmission();
@@ -33,8 +33,8 @@ function Main() {
         if (response.torrents) {
           setTorrents(response.torrents as TorrentOverview[]);
         }
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch torrents');
+      } catch {
+        setError('Failed to fetch torrents');
       } finally {
         setIsLoading(false);
       }
@@ -119,8 +119,8 @@ function Main() {
     const ids = processedTorrents.map(t => t.id);
     try {
       await transmission.start(ids);
-    } catch (err) {
-      console.error('Failed to start all torrents:', err);
+    } catch {
+      console.error('Failed to start all torrents:');
     }
   };
 
@@ -129,8 +129,8 @@ function Main() {
     const ids = processedTorrents.map(t => t.id);
     try {
       await transmission.stop(ids);
-    } catch (err) {
-      console.error('Failed to stop all torrents:', err);
+    } catch {
+      console.error('Failed to stop all torrents:');
     }
   };
 
@@ -140,9 +140,7 @@ function Main() {
         ref={searchInputRef}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
-        filterStatus={filterStatus}
         onFilterStatusChange={setFilterStatus}
-        sortBy={sortBy}
         onSortByChange={setSortBy}
         sortDirection={sortDirection}
         onSortDirectionChange={setSortDirection}

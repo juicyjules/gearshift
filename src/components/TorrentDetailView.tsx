@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   FaBox, FaChartLine, FaDownload, FaUpload, FaCalendarAlt,
-  FaUser, FaFolder, FaComment, FaFile, FaLink, FaChevronDown, FaChevronUp
+  FaUser, FaFolder, FaComment, FaChevronDown, FaChevronUp
 } from 'react-icons/fa';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentDetails } from '../entities/TorrentDetails';

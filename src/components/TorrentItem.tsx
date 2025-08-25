@@ -52,9 +52,11 @@ const formatEta = (eta: number): string => {
 
 interface TorrentItemProps {
   torrent: TorrentOverview;
+  isSelected: boolean;
+  onTorrentClick: (id: number, isCtrlPressed: boolean, isShiftPressed: boolean) => void;
 }
 
-const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
+const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorrentClick }) => {
   const { transmission } = useTransmission();
   const [isOpen, setIsOpen] = useState(false);
   const [details, setDetails] = useState<TorrentDetails | null>(null);
@@ -98,6 +100,13 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
     }
   };
 
+  const handleItemClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('.torrent-controls')) {
+      return;
+    }
+    onTorrentClick(torrent.id, e.ctrlKey || e.metaKey, e.shiftKey);
+  };
+
   const isRunning = status !== TorrentStatus.Stopped;
 
   const handleStartStopClick = async (e: React.MouseEvent) => {
@@ -116,14 +125,22 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent }) => {
     }
   };
 
+  const handleDoubleClick = () => {
+    handleToggle();
+  };
+
   return (
-    <div className={`torrent-item-container`}>
+    <div className={`torrent-item-container ${isSelected ? 'selected' : ''}`}>
       <div
         className={`torrent-item status-${statusText.toLowerCase().replace(' ', '-')}`}
-        onClick={handleToggle}
+        onClick={handleItemClick}
+        onDoubleClick={handleDoubleClick}
       >
         <div className="torrent-controls">
-          <button className={`control-button ${isRunning ? 'running' : 'paused'}`} onClick={handleStartStopClick}>
+          <button
+            className={`control-button ${isRunning ? 'running' : 'paused'}`}
+            onClick={handleStartStopClick}
+          >
             {isRunning ? <FaPause /> : <FaPlay />}
           </button>
         </div>

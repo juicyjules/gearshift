@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import TorrentList from './TorrentList';
 import Navbar from './Navbar';
 import SettingsModal from './SettingsModal';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
+import AddTorrentModal from './AddTorrentModal';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentOverview, TorrentOverviewFields } from '../entities/TorrentOverview';
 import Fuse from 'fuse.js';
@@ -18,10 +20,49 @@ function Main() {
   const [showOnlyActive, setShowOnlyActive] = useState(false);
   const [sortBy, setSortBy] = useState('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [selectedTorrents, setSelectedTorrents] = useState(new Set<number>());
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const lastSelectedId = useRef<number | null>(null);
+
+  const handleTorrentClick = (
+    clickedId: number,
+    isCtrlPressed: boolean,
+    isShiftPressed: boolean
+  ) => {
+    const newSelection = new Set(selectedTorrents);
+    const torrentsToSelect = processedTorrents.map((t) => t.id);
+    const lastIdx = lastSelectedId.current !== null ? torrentsToSelect.indexOf(lastSelectedId.current) : -1;
+    const clickedIdx = torrentsToSelect.indexOf(clickedId);
+
+    if (isShiftPressed && lastIdx !== -1) {
+      const start = Math.min(lastIdx, clickedIdx);
+      const end = Math.max(lastIdx, clickedIdx);
+      for (let i = start; i <= end; i++) {
+        newSelection.add(torrentsToSelect[i]);
+      }
+    } else if (isCtrlPressed) {
+      if (newSelection.has(clickedId)) {
+        newSelection.delete(clickedId);
+      } else {
+        newSelection.add(clickedId);
+      }
+    } else {
+      if (newSelection.has(clickedId) && newSelection.size === 1) {
+        newSelection.clear();
+      } else {
+        newSelection.clear();
+        newSelection.add(clickedId);
+      }
+    }
+
+    setSelectedTorrents(newSelection);
+    lastSelectedId.current = clickedId;
+  };
 
   useEffect(() => {
     if (!transmission) return;
@@ -48,6 +89,12 @@ function Main() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'a' && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        const allIds = new Set(processedTorrents.map(t => t.id));
+        setSelectedTorrents(allIds);
+        return;
+      }
       if (
         (event.target as HTMLElement).tagName.toLowerCase() !== 'input' &&
         (event.target as HTMLElement).tagName.toLowerCase() !== 'textarea' &&
@@ -63,7 +110,7 @@ function Main() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, []);
+  }, [processedTorrents]);
 
   const fuse = useMemo(() => new Fuse(torrents, {
     keys: ['name'],
@@ -134,6 +181,50 @@ function Main() {
     }
   };
 
+  const handleDeleteClick = () => {
+    if (selectedTorrents.size > 0) {
+      setIsDeleteModalOpen(true);
+    }
+  };
+
+  const handleDeleteConfirm = async (deleteData: boolean) => {
+    if (!transmission) return;
+    try {
+      await transmission.remove(Array.from(selectedTorrents), deleteData);
+      setSelectedTorrents(new Set()); // Clear selection
+    } catch (err) {
+      console.error('Failed to delete torrents:', err);
+      // You might want to set an error state here to show in the UI
+    } finally {
+      setIsDeleteModalOpen(false);
+    }
+  };
+
+  const handleAddClick = () => {
+    setIsAddModalOpen(true);
+  };
+
+  const handleAddTorrents = async (args: { metainfo?: string[]; magnets?: string[] }) => {
+    if (!transmission) return;
+    try {
+      if (args.metainfo) {
+        for (const meta of args.metainfo) {
+          await transmission.add({ metainfo: meta });
+        }
+      }
+      if (args.magnets) {
+        for (const magnet of args.magnets) {
+          await transmission.add({ filename: magnet });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to add torrents:', err);
+      // You might want to set an error state here to show in the UI
+    } finally {
+      setIsAddModalOpen(false);
+    }
+  };
+
   return (
     <div className="App">
       <Navbar
@@ -151,11 +242,33 @@ function Main() {
         onSettingsClick={() => setIsSettingsOpen(true)}
         onStartAll={handleStartAll}
         onStopAll={handleStopAll}
+        selectedCount={selectedTorrents.size}
+        onDeleteClick={handleDeleteClick}
+        onAddClick={handleAddClick}
       />
       <div className="app-container">
-        <TorrentList torrents={processedTorrents} isLoading={isLoading} error={error} />
+        <TorrentList
+          torrents={processedTorrents}
+          isLoading={isLoading}
+          error={error}
+          selectedTorrents={selectedTorrents}
+          onTorrentClick={handleTorrentClick}
+        />
       </div>
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
+      {isDeleteModalOpen && (
+        <DeleteConfirmationModal
+          torrentCount={selectedTorrents.size}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setIsDeleteModalOpen(false)}
+        />
+      )}
+      {isAddModalOpen && (
+        <AddTorrentModal
+          onAdd={handleAddTorrents}
+          onClose={() => setIsAddModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

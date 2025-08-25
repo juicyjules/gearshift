@@ -7,9 +7,17 @@ interface TorrentListProps {
   torrents: TorrentOverview[];
   isLoading: boolean;
   error: string | null;
+  selectedTorrents: Set<number>;
+  onTorrentClick: (id: number, isCtrlPressed: boolean, isShiftPressed: boolean) => void;
 }
 
-const TorrentList: React.FC<TorrentListProps> = ({ torrents, isLoading, error }) => {
+const TorrentList: React.FC<TorrentListProps> = ({
+  torrents,
+  isLoading,
+  error,
+  selectedTorrents,
+  onTorrentClick,
+}) => {
   if (isLoading) {
     return <div>Loading torrents...</div>;
   }
@@ -25,7 +33,12 @@ const TorrentList: React.FC<TorrentListProps> = ({ torrents, isLoading, error })
   return (
     <div className="torrent-list">
       {torrents.map((torrent) => (
-        <TorrentItem key={torrent.id} torrent={torrent} />
+        <TorrentItem
+          key={torrent.id}
+          torrent={torrent}
+          isSelected={selectedTorrents.has(torrent.id)}
+          onTorrentClick={onTorrentClick}
+        />
       ))}
     </div>
   );

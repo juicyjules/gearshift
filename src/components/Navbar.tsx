@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog, FaPlayCircle, FaPauseCircle } from 'react-icons/fa';
+import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog, FaPlayCircle, FaPauseCircle, FaTrash, FaPlus } from 'react-icons/fa';
 import './Navbar.css';
 import CustomDropdown from './CustomDropdown';
 import { useTransmission } from '../contexts/TransmissionContext';
@@ -31,6 +31,9 @@ interface NavbarProps {
   onSettingsClick: () => void;
   onStartAll: () => void;
   onStopAll: () => void;
+  selectedCount: number;
+  onDeleteClick: () => void;
+  onAddClick: () => void;
 }
 
 const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
@@ -47,6 +50,9 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
   onSettingsClick,
   onStartAll,
   onStopAll,
+  selectedCount,
+  onDeleteClick,
+  onAddClick,
 }, ref) => {
   const { transmission } = useTransmission();
   const [stats, setStats] = useState<SessionStatsResponse | null>(null);
@@ -87,6 +93,17 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
           </button>
           <button className="global-control-button" onClick={onStopAll} title="Stop all filtered torrents">
             <FaPauseCircle />
+          </button>
+          <button className="global-control-button" onClick={onAddClick} title="Add new torrent">
+            <FaPlus />
+          </button>
+          <button
+            className="global-control-button"
+            onClick={onDeleteClick}
+            disabled={selectedCount === 0}
+            title="Delete selected torrents"
+          >
+            <FaTrash />
           </button>
         </div>
         <div className="navbar-search">

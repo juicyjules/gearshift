@@ -6,6 +6,8 @@ import DeleteConfirmationModal from './DeleteConfirmationModal';
 import AddTorrentModal from './AddTorrentModal';
 import Notification from './Notification';
 import FloatingToolbar from './FloatingToolbar';
+import Dropzone from './Dropzone';
+import { useTorrentSelection } from '../hooks/useTorrentSelection';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentOverview, TorrentOverviewFields } from '../entities/TorrentOverview';
 import Fuse from 'fuse.js';
@@ -22,16 +24,13 @@ function Main() {
   const [showOnlyActive, setShowOnlyActive] = useState(false);
   const [sortBy, setSortBy] = useState('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-  const [selectedTorrents, setSelectedTorrents] = useState(new Set<number>());
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const lastSelectedId = useRef<number | null>(null);
   const [initialFiles, setInitialFiles] = useState<File[]>([]);
   const [initialMagnets, setInitialMagnets] = useState('');
 
@@ -39,22 +38,9 @@ function Main() {
     setNotification({ message, type });
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-
+  const handleDropEvent = (dataTransfer: DataTransfer) => {
     // 1. Check for .torrent files
-    const torrentFiles = Array.from(e.dataTransfer.files).filter(file =>
+    const torrentFiles = Array.from(dataTransfer.files).filter(file =>
       file.name.endsWith('.torrent')
     );
 
@@ -67,13 +53,13 @@ function Main() {
 
     // 2. If no files, check for magnet links in any text-like data
     let droppedText = '';
-    const types = e.dataTransfer.types;
+    const types = dataTransfer.types;
 
     // Prioritize URI lists, then plain text
     if (types.includes('text/uri-list')) {
-        droppedText = e.dataTransfer.getData('text/uri-list');
+        droppedText = dataTransfer.getData('text/uri-list');
     } else if (types.includes('text/plain')) {
-        droppedText = e.dataTransfer.getData('text/plain');
+        droppedText = dataTransfer.getData('text/plain');
     }
 
     // A more forgiving regex to find any magnet link
@@ -140,40 +126,7 @@ function Main() {
     return sortedResult;
   }, [searchTerm, filterStatus, showOnlyActive, sortBy, sortDirection, torrents, fuse]);
 
-  const handleTorrentClick = (
-    clickedId: number,
-    isCtrlPressed: boolean,
-    isShiftPressed: boolean
-  ) => {
-    const newSelection = new Set(selectedTorrents);
-    const torrentsToSelect = processedTorrents.map((t) => t.id);
-    const lastIdx = lastSelectedId.current !== null ? torrentsToSelect.indexOf(lastSelectedId.current) : -1;
-    const clickedIdx = torrentsToSelect.indexOf(clickedId);
-
-    if (isShiftPressed && lastIdx !== -1) {
-      const start = Math.min(lastIdx, clickedIdx);
-      const end = Math.max(lastIdx, clickedIdx);
-      for (let i = start; i <= end; i++) {
-        newSelection.add(torrentsToSelect[i]);
-      }
-    } else if (isCtrlPressed) {
-      if (newSelection.has(clickedId)) {
-        newSelection.delete(clickedId);
-      } else {
-        newSelection.add(clickedId);
-      }
-    } else {
-      if (newSelection.has(clickedId) && newSelection.size === 1) {
-        newSelection.clear();
-      } else {
-        newSelection.clear();
-        newSelection.add(clickedId);
-      }
-    }
-
-    setSelectedTorrents(newSelection);
-    lastSelectedId.current = clickedId;
-  };
+  const { selectedTorrents, setSelectedTorrents, handleTorrentClick } = useTorrentSelection(processedTorrents);
 
   useEffect(() => {
     if (!transmission) return;
@@ -225,7 +178,7 @@ function Main() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [processedTorrents]);
+  }, [processedTorrents, setSelectedTorrents]);
 
   const handleStartAll = async () => {
     if (!transmission) return;
@@ -288,15 +241,10 @@ function Main() {
   };
 
   return (
-    <div
-      className="App"
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
-      {isDragging && <div className="drag-overlay" />}
-      <Navbar
-        ref={searchInputRef}
+    <Dropzone onDrop={handleDropEvent}>
+      <div className="App">
+        <Navbar
+          ref={searchInputRef}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
         onFilterStatusChange={setFilterStatus}
@@ -345,7 +293,8 @@ function Main() {
           onClose={() => setNotification(null)}
         />
       )}
-    </div>
+      </div>
+    </Dropzone>
   );
 }
 

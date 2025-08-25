@@ -4,15 +4,7 @@ import './Navbar.css';
 import CustomDropdown from './CustomDropdown';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type SessionStatsResponse } from '../transmission-rpc/types';
-
-const formatBytes = (bytes: number, decimals: number = 2): string => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}/s`;
-};
+import { formatBytes } from '../utils/formatting';
 
 import { TorrentStatus } from '../transmission-rpc/types';
 import { type SortDirection } from './Main';
@@ -132,8 +124,8 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
           {error && <span className="error-message">{error}</span>}
           {stats && (
             <>
-              <span className="stat-item"><FaArrowDown /> {formatBytes(stats.downloadSpeed)}</span>
-              <span className="stat-item"><FaArrowUp /> {formatBytes(stats.uploadSpeed)}</span>
+              <span className="stat-item"><FaArrowDown /> {formatBytes(stats.downloadSpeed)}/s</span>
+              <span className="stat-item"><FaArrowUp /> {formatBytes(stats.uploadSpeed)}/s</span>
               <button
                 className={`stat-active ${showOnlyActive ? 'active' : ''}`}
                 onClick={() => onShowOnlyActiveChange(!showOnlyActive)}

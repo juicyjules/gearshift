@@ -293,7 +293,7 @@ function Main() {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
-      {isDragging && <div className="drag-overlay">Drop to add torrents</div>}
+      {isDragging && <div className="drag-overlay" />}
       <Navbar
         ref={searchInputRef}
         searchTerm={searchTerm}

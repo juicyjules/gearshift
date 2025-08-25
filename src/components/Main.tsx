@@ -233,6 +233,18 @@ function Main() {
     }
   };
 
+  const areAnyTorrentsActive = useMemo(() => {
+    return processedTorrents.some(t => t.status !== TorrentStatus.Stopped);
+  }, [processedTorrents]);
+
+  const handleToggleAllClick = () => {
+    if (areAnyTorrentsActive) {
+      handleStopAll();
+    } else {
+      handleStartAll();
+    }
+  };
+
   const handleDeleteClick = () => {
     if (selectedTorrents.size > 0) {
       setIsDeleteModalOpen(true);
@@ -304,8 +316,8 @@ function Main() {
         showOnlyActive={showOnlyActive}
         onShowOnlyActiveChange={setShowOnlyActive}
         onSettingsClick={() => setIsSettingsOpen(true)}
-        onStartAll={handleStartAll}
-        onStopAll={handleStopAll}
+        areAnyTorrentsActive={areAnyTorrentsActive}
+        onToggleAllClick={handleToggleAllClick}
       />
       <div className="app-container">
         <TorrentList

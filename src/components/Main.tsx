@@ -272,29 +272,6 @@ function Main() {
     setIsAddModalOpen(true);
   };
 
-  const handleAddTorrents = async (args: { metainfo?: string[]; magnets?: string[] }) => {
-    if (!transmission) return;
-    const { metainfo = [], magnets = [] } = args;
-    const count = metainfo.length + magnets.length;
-
-    try {
-      const promises = [];
-      if (metainfo.length > 0) {
-        promises.push(...metainfo.map(meta => transmission.add({ metainfo: meta })));
-      }
-      if (magnets.length > 0) {
-        promises.push(...magnets.map(magnet => transmission.add({ filename: magnet })));
-      }
-      await Promise.all(promises);
-      showNotification(`${count} torrent(s) added successfully.`, 'success');
-    } catch (err) {
-      console.error('Failed to add torrents:', err);
-      showNotification(`Failed to add torrent(s).`, 'error');
-    } finally {
-      setIsAddModalOpen(false);
-    }
-  };
-
   return (
     <div
       className="App"
@@ -343,7 +320,6 @@ function Main() {
       )}
       {isAddModalOpen && (
         <AddTorrentModal
-          onAdd={handleAddTorrents}
           onClose={() => setIsAddModalOpen(false)}
           initialFiles={initialFiles}
           initialMagnets={initialMagnets}

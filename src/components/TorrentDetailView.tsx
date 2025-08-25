@@ -51,36 +51,25 @@ const TorrentDetailView: React.FC<TorrentDetailViewProps> = ({ torrent }) => {
     }
   }, [fileStats]);
 
-  const handleFileCheck = (index: number, checked: boolean) => {
+  const handleFileCheck = async (index: number, checked: boolean) => {
     const newSelectedFiles = [...selectedFiles];
     newSelectedFiles[index] = checked;
     setSelectedFiles(newSelectedFiles);
-  };
 
-  const handleApplyChanges = async () => {
     if (!transmission) return;
-
-    const filesWanted: number[] = [];
-    const filesUnwanted: number[] = [];
-
-    selectedFiles.forEach((wanted, index) => {
-      if (wanted !== fileStats[index].wanted) {
-        if (wanted) {
-          filesWanted.push(index);
-        } else {
-          filesUnwanted.push(index);
-        }
-      }
-    });
 
     try {
       await transmission.set({
         ids: [torrent.id],
-        filesWanted,
-        filesUnwanted,
+        filesWanted: checked ? [index] : [],
+        filesUnwanted: !checked ? [index] : [],
       });
     } catch (err) {
       console.error('Failed to update file selection:', err);
+      // Revert the optimistic UI update on failure
+      const revertedSelectedFiles = [...newSelectedFiles];
+      revertedSelectedFiles[index] = !checked;
+      setSelectedFiles(revertedSelectedFiles);
     }
   };
 
@@ -111,7 +100,6 @@ const TorrentDetailView: React.FC<TorrentDetailViewProps> = ({ torrent }) => {
         <div className="detail-section">
           <div className="file-list-header">
             <h5 className="detail-section-title">Files ({files.length})</h5>
-            <button className="apply-button" onClick={handleApplyChanges}>Apply Changes</button>
           </div>
           <ul className="detail-list file-list">
             {filesToShow.map((file, index) => (

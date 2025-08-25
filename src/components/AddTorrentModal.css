@@ -99,3 +99,14 @@
 .btn-primary:hover {
   background-color: #0b5ed7;
 }
+
+.magnet-textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+}

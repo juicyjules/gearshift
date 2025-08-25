@@ -4,6 +4,7 @@ import Navbar from './Navbar';
 import SettingsModal from './SettingsModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import AddTorrentModal from './AddTorrentModal';
+import Notification from './Notification';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentOverview, TorrentOverviewFields } from '../entities/TorrentOverview';
 import Fuse from 'fuse.js';
@@ -26,91 +27,47 @@ function Main() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const lastSelectedId = useRef<number | null>(null);
+  const [initialFiles, setInitialFiles] = useState<File[]>([]);
+  const [initialMagnets, setInitialMagnets] = useState('');
 
-  const handleTorrentClick = (
-    clickedId: number,
-    isCtrlPressed: boolean,
-    isShiftPressed: boolean
-  ) => {
-    const newSelection = new Set(selectedTorrents);
-    const torrentsToSelect = processedTorrents.map((t) => t.id);
-    const lastIdx = lastSelectedId.current !== null ? torrentsToSelect.indexOf(lastSelectedId.current) : -1;
-    const clickedIdx = torrentsToSelect.indexOf(clickedId);
-
-    if (isShiftPressed && lastIdx !== -1) {
-      const start = Math.min(lastIdx, clickedIdx);
-      const end = Math.max(lastIdx, clickedIdx);
-      for (let i = start; i <= end; i++) {
-        newSelection.add(torrentsToSelect[i]);
-      }
-    } else if (isCtrlPressed) {
-      if (newSelection.has(clickedId)) {
-        newSelection.delete(clickedId);
-      } else {
-        newSelection.add(clickedId);
-      }
-    } else {
-      if (newSelection.has(clickedId) && newSelection.size === 1) {
-        newSelection.clear();
-      } else {
-        newSelection.clear();
-        newSelection.add(clickedId);
-      }
-    }
-
-    setSelectedTorrents(newSelection);
-    lastSelectedId.current = clickedId;
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type });
   };
 
-  useEffect(() => {
-    if (!transmission) return;
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
 
-    const fetchTorrents = async () => {
-      if (torrents.length === 0) setIsLoading(true);
-      try {
-        const response = await transmission.torrents({ fields: TorrentOverviewFields });
-        if (response.torrents) {
-          setTorrents(response.torrents as TorrentOverview[]);
-        }
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch torrents');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
 
-    fetchTorrents();
-    const intervalId = setInterval(fetchTorrents, 2000);
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
 
-    return () => clearInterval(intervalId);
-  }, [transmission, torrents.length]);
+    const droppedFiles = Array.from(e.dataTransfer.files).filter(file =>
+      file.name.endsWith('.torrent')
+    );
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'a' && (event.ctrlKey || event.metaKey)) {
-        event.preventDefault();
-        const allIds = new Set(processedTorrents.map(t => t.id));
-        setSelectedTorrents(allIds);
-        return;
-      }
-      if (
-        (event.target as HTMLElement).tagName.toLowerCase() !== 'input' &&
-        (event.target as HTMLElement).tagName.toLowerCase() !== 'textarea' &&
-        !event.metaKey && !event.ctrlKey && !event.altKey
-      ) {
-        if (searchInputRef.current) {
-          searchInputRef.current.focus();
-        }
-      }
-    };
+    if (droppedFiles.length > 0) {
+      setInitialFiles(droppedFiles);
+      setIsAddModalOpen(true);
+      return;
+    }
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [processedTorrents]);
+    const droppedText = e.dataTransfer.getData('text/plain');
+    if (droppedText && droppedText.startsWith('magnet:')) {
+      setInitialMagnets(droppedText);
+      setIsAddModalOpen(true);
+    }
+  };
 
   const fuse = useMemo(() => new Fuse(torrents, {
     keys: ['name'],
@@ -161,6 +118,93 @@ function Main() {
     return sortedResult;
   }, [searchTerm, filterStatus, showOnlyActive, sortBy, sortDirection, torrents, fuse]);
 
+  const handleTorrentClick = (
+    clickedId: number,
+    isCtrlPressed: boolean,
+    isShiftPressed: boolean
+  ) => {
+    const newSelection = new Set(selectedTorrents);
+    const torrentsToSelect = processedTorrents.map((t) => t.id);
+    const lastIdx = lastSelectedId.current !== null ? torrentsToSelect.indexOf(lastSelectedId.current) : -1;
+    const clickedIdx = torrentsToSelect.indexOf(clickedId);
+
+    if (isShiftPressed && lastIdx !== -1) {
+      const start = Math.min(lastIdx, clickedIdx);
+      const end = Math.max(lastIdx, clickedIdx);
+      for (let i = start; i <= end; i++) {
+        newSelection.add(torrentsToSelect[i]);
+      }
+    } else if (isCtrlPressed) {
+      if (newSelection.has(clickedId)) {
+        newSelection.delete(clickedId);
+      } else {
+        newSelection.add(clickedId);
+      }
+    } else {
+      if (newSelection.has(clickedId) && newSelection.size === 1) {
+        newSelection.clear();
+      } else {
+        newSelection.clear();
+        newSelection.add(clickedId);
+      }
+    }
+
+    setSelectedTorrents(newSelection);
+    lastSelectedId.current = clickedId;
+  };
+
+  useEffect(() => {
+    if (!transmission) return;
+
+    const fetchTorrents = async () => {
+      if (torrents.length === 0) setIsLoading(true);
+      try {
+        const response = await transmission.torrents({ fields: TorrentOverviewFields });
+        if (response.torrents) {
+          setTorrents(response.torrents as TorrentOverview[]);
+        }
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Failed to fetch torrents');
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTorrents();
+    const intervalId = setInterval(fetchTorrents, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [transmission, torrents.length]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'a' && (event.ctrlKey || event.metaKey)) {
+        event.preventDefault();
+        const allIds = new Set(processedTorrents.map(t => t.id));
+        setSelectedTorrents(allIds);
+        return;
+      }
+      if (
+        (event.target as HTMLElement).tagName.toLowerCase() !== 'input' &&
+        (event.target as HTMLElement).tagName.toLowerCase() !== 'textarea' &&
+        !event.metaKey && !event.ctrlKey && !event.altKey
+      ) {
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [processedTorrents]);
+
   const handleStartAll = async () => {
     if (!transmission) return;
     const ids = processedTorrents.map(t => t.id);
@@ -189,44 +233,56 @@ function Main() {
 
   const handleDeleteConfirm = async (deleteData: boolean) => {
     if (!transmission) return;
+    const count = selectedTorrents.size;
     try {
       await transmission.remove(Array.from(selectedTorrents), deleteData);
       setSelectedTorrents(new Set()); // Clear selection
+      showNotification(`${count} torrent(s) deleted successfully.`, 'success');
     } catch (err) {
       console.error('Failed to delete torrents:', err);
-      // You might want to set an error state here to show in the UI
+      showNotification(`Failed to delete torrents.`, 'error');
     } finally {
       setIsDeleteModalOpen(false);
     }
   };
 
   const handleAddClick = () => {
+    setInitialFiles([]);
+    setInitialMagnets('');
     setIsAddModalOpen(true);
   };
 
   const handleAddTorrents = async (args: { metainfo?: string[]; magnets?: string[] }) => {
     if (!transmission) return;
+    const { metainfo = [], magnets = [] } = args;
+    const count = metainfo.length + magnets.length;
+
     try {
-      if (args.metainfo) {
-        for (const meta of args.metainfo) {
-          await transmission.add({ metainfo: meta });
-        }
+      const promises = [];
+      if (metainfo.length > 0) {
+        promises.push(...metainfo.map(meta => transmission.add({ metainfo: meta })));
       }
-      if (args.magnets) {
-        for (const magnet of args.magnets) {
-          await transmission.add({ filename: magnet });
-        }
+      if (magnets.length > 0) {
+        promises.push(...magnets.map(magnet => transmission.add({ filename: magnet })));
       }
+      await Promise.all(promises);
+      showNotification(`${count} torrent(s) added successfully.`, 'success');
     } catch (err) {
       console.error('Failed to add torrents:', err);
-      // You might want to set an error state here to show in the UI
+      showNotification(`Failed to add torrent(s).`, 'error');
     } finally {
       setIsAddModalOpen(false);
     }
   };
 
   return (
-    <div className="App">
+    <div
+      className="App"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {isDragging && <div className="drag-overlay">Drop to add torrents</div>}
       <Navbar
         ref={searchInputRef}
         searchTerm={searchTerm}
@@ -267,6 +323,15 @@ function Main() {
         <AddTorrentModal
           onAdd={handleAddTorrents}
           onClose={() => setIsAddModalOpen(false)}
+          initialFiles={initialFiles}
+          initialMagnets={initialMagnets}
+        />
+      )}
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
         />
       )}
     </div>

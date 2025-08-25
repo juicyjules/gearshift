@@ -4,13 +4,31 @@ import './AddTorrentModal.css';
 interface AddTorrentModalProps {
   onAdd: (args: { metainfo?: string[]; magnets?: string[] }) => void;
   onClose: () => void;
+  initialFiles?: File[];
+  initialMagnets?: string;
 }
 
 type ActiveTab = 'files' | 'magnets';
 
-const AddTorrentModal: React.FC<AddTorrentModalProps> = ({ onAdd, onClose }) => {
+import React, { useState, useCallback, useEffect } from 'react';
+
+const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
+  onAdd,
+  onClose,
+  initialFiles = [],
+  initialMagnets = '',
+}) => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('files');
-  const [files, setFiles] = useState<File[]>([]);
+  const [files, setFiles] = useState<File[]>(initialFiles);
+  const [magnets, setMagnets] = useState(initialMagnets);
+
+  useEffect(() => {
+    if (initialFiles.length > 0) {
+      setActiveTab('files');
+    } else if (initialMagnets) {
+      setActiveTab('magnets');
+    }
+  }, [initialFiles, initialMagnets]);
 
   const handleFileChange = (newFiles: FileList | null) => {
     if (newFiles) {
@@ -39,15 +57,15 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({ onAdd, onClose }) => 
   };
 
   const handleAdd = async () => {
+    const args: { metainfo?: string[]; magnets?: string[] } = {};
+
     if (files.length > 0) {
-      const metainfo = await Promise.all(
+      args.metainfo = await Promise.all(
         files.map(file => {
           return new Promise<string>((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => {
               const result = reader.result as string;
-              // result is "data:application/x-bittorrent;base64,BASE64_ENCODED_STRING"
-              // we need to extract just the base64 part
               resolve(result.split(',')[1]);
             };
             reader.onerror = reject;
@@ -55,7 +73,16 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({ onAdd, onClose }) => 
           });
         })
       );
-      onAdd({ metainfo });
+    }
+
+    if (magnets.trim()) {
+      args.magnets = magnets.split('\n').filter(link => link.trim().startsWith('magnet:'));
+    }
+
+    if (args.metainfo || args.magnets) {
+      onAdd(args);
+    } else {
+      onClose();
     }
   };
 
@@ -109,9 +136,13 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({ onAdd, onClose }) => 
             </div>
           )}
           {activeTab === 'magnets' && (
-            <div>
-              {/* Magnet link textarea will go here */}
-              <p>Magnet link input will be implemented here.</p>
+            <div className="magnet-input-container">
+              <textarea
+                className="magnet-textarea"
+                placeholder="Enter magnet links, one per line."
+                value={magnets}
+                onChange={(e) => setMagnets(e.target.value)}
+              />
             </div>
           )}
         </div>

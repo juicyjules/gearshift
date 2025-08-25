@@ -92,8 +92,12 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorren
         if (response.torrents && response.torrents.length > 0) {
           setDetails(response.torrents[0] as TorrentDetails);
         }
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch details');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Failed to fetch details');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -119,7 +123,7 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorren
       } else {
         await transmission.start(torrent.id);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to start/stop torrent:', err);
       // Optionally, set an error state to show in the UI
     }

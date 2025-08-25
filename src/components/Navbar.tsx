@@ -39,9 +39,7 @@ interface NavbarProps {
 const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
   searchTerm,
   onSearchTermChange,
-  filterStatus,
   onFilterStatusChange,
-  sortBy,
   onSortByChange,
   sortDirection,
   onSortDirectionChange,
@@ -68,8 +66,12 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
       try {
         const response = await transmission.stats();
         setStats(response);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch session stats');
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Failed to fetch session stats');
+        }
       } finally {
         setIsLoading(false);
       }

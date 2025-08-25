@@ -6,6 +6,7 @@ import DeleteConfirmationModal from './DeleteConfirmationModal';
 import AddTorrentModal from './AddTorrentModal';
 import Notification from './Notification';
 import FloatingToolbar from './FloatingToolbar';
+import Dropzone from './Dropzone';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentOverview, TorrentOverviewFields } from '../entities/TorrentOverview';
 import Fuse from 'fuse.js';
@@ -28,7 +29,6 @@ function Main() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const lastSelectedId = useRef<number | null>(null);
@@ -39,22 +39,9 @@ function Main() {
     setNotification({ message, type });
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-
+  const handleDropEvent = (dataTransfer: DataTransfer) => {
     // 1. Check for .torrent files
-    const torrentFiles = Array.from(e.dataTransfer.files).filter(file =>
+    const torrentFiles = Array.from(dataTransfer.files).filter(file =>
       file.name.endsWith('.torrent')
     );
 
@@ -67,13 +54,13 @@ function Main() {
 
     // 2. If no files, check for magnet links in any text-like data
     let droppedText = '';
-    const types = e.dataTransfer.types;
+    const types = dataTransfer.types;
 
     // Prioritize URI lists, then plain text
     if (types.includes('text/uri-list')) {
-        droppedText = e.dataTransfer.getData('text/uri-list');
+        droppedText = dataTransfer.getData('text/uri-list');
     } else if (types.includes('text/plain')) {
-        droppedText = e.dataTransfer.getData('text/plain');
+        droppedText = dataTransfer.getData('text/plain');
     }
 
     // A more forgiving regex to find any magnet link
@@ -287,15 +274,10 @@ function Main() {
   };
 
   return (
-    <div
-      className="App"
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-    >
-      {isDragging && <div className="drag-overlay" />}
-      <Navbar
-        ref={searchInputRef}
+    <Dropzone onDrop={handleDropEvent}>
+      <div className="App">
+        <Navbar
+          ref={searchInputRef}
         searchTerm={searchTerm}
         onSearchTermChange={setSearchTerm}
         filterStatus={filterStatus}
@@ -346,7 +328,8 @@ function Main() {
           onClose={() => setNotification(null)}
         />
       )}
-    </div>
+      </div>
+    </Dropzone>
   );
 }
 

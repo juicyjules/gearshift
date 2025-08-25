@@ -1,3 +1,11 @@
 .torrent-list {
   padding: 0 1rem;
 }
+.empty {
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-color);
+}

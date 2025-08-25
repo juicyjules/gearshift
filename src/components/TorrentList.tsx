@@ -19,7 +19,7 @@ const TorrentList: React.FC<TorrentListProps> = ({ torrents, isLoading, error })
   }
 
   if (torrents.length === 0) {
-    return <div>No torrents found.</div>;
+    return <div className="empty"> No Torrents available. </div>;
   }
 
   return (

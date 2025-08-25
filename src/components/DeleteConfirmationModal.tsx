@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaTrash } from 'react-icons/fa';
 import './DeleteConfirmationModal.css';
 
 interface DeleteConfirmationModalProps {
@@ -37,9 +38,10 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
           </button>
           <button
             onClick={() => onConfirm(deleteData)}
-            className="btn btn-danger"
+            className="btn btn-danger btn-with-icon"
           >
-            Delete
+            <FaTrash />
+            <span>Delete</span>
           </button>
         </div>
       </div>

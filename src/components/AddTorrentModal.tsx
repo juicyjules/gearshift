@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { FaPlus } from 'react-icons/fa';
 import './AddTorrentModal.css';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type AddTorrentResponse } from '../transmission-rpc/types';
@@ -228,8 +229,9 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
           <button onClick={onClose} className="btn btn-secondary">
             Cancel
           </button>
-          <button onClick={handleAdd} className="btn btn-primary">
-            Add Torrents
+          <button onClick={handleAdd} className="btn btn-primary btn-with-icon">
+            <FaPlus />
+            <span>Add Torrents</span>
           </button>
         </div>
       </div>

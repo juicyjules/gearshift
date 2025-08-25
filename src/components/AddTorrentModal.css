@@ -78,19 +78,6 @@
   cursor: pointer;
 }
 
-.file-list {
-  margin-top: 1rem;
-  text-align: left;
-}
-
-.file-item {
-  background-color: #e9ecef;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-}
-
 .btn-primary {
   background-color: #0d6efd;
   color: white;
@@ -119,7 +106,7 @@
 
 .staged-torrents-list {
   margin-bottom: 1rem;
-  max-height: 150px;
+  max-height: 120px;
   overflow-y: auto;
   border: 1px solid #e9ecef;
   border-radius: 6px;
@@ -174,4 +161,10 @@
 
 .remove-staged-btn:hover {
   opacity: 1;
+}
+
+.btn-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }

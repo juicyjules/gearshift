@@ -53,27 +53,41 @@ function Main() {
     e.preventDefault();
     setIsDragging(false);
 
-    // Check for dropped .torrent files first
-    const droppedFiles = Array.from(e.dataTransfer.files).filter(file =>
+    // 1. Check for .torrent files
+    const torrentFiles = Array.from(e.dataTransfer.files).filter(file =>
       file.name.endsWith('.torrent')
     );
 
-    if (droppedFiles.length > 0) {
-      setInitialFiles(droppedFiles);
+    if (torrentFiles.length > 0) {
+      setInitialFiles(torrentFiles);
       setInitialMagnets('');
       setIsAddModalOpen(true);
       return;
     }
 
-    // If no files, check for magnet links in text data
-    const droppedText = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain');
-    const magnetRegex = /magnet:\?xt=urn:[a-z0-9]+:[a-z0-9]{32,40}/gi;
+    // 2. If no files, check for magnet links in any text-like data
+    let droppedText = '';
+    const types = e.dataTransfer.types;
+
+    // Prioritize URI lists, then plain text
+    if (types.includes('text/uri-list')) {
+        droppedText = e.dataTransfer.getData('text/uri-list');
+    } else if (types.includes('text/plain')) {
+        droppedText = e.dataTransfer.getData('text/plain');
+    }
+
+    // A more forgiving regex to find any magnet link
+    const magnetRegex = /(magnet:\?xt=urn:[a-z0-9]+:[a-zA-Z0-9&.=:%+-]+)/gi;
     const foundMagnets = droppedText.match(magnetRegex);
 
     if (foundMagnets && foundMagnets.length > 0) {
       setInitialFiles([]);
       setInitialMagnets(foundMagnets.join('\n'));
       setIsAddModalOpen(true);
+    } else {
+        console.log("No .torrent files or magnet links found in drop data.");
+        console.log("DataTransfer types:", types);
+        console.log("Dropped text:", droppedText);
     }
   };
 

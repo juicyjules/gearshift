@@ -7,6 +7,7 @@ import AddTorrentModal from './AddTorrentModal';
 import Notification from './Notification';
 import FloatingToolbar from './FloatingToolbar';
 import Dropzone from './Dropzone';
+import { useTorrentSelection } from '../hooks/useTorrentSelection';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentOverview, TorrentOverviewFields } from '../entities/TorrentOverview';
 import Fuse from 'fuse.js';
@@ -23,7 +24,6 @@ function Main() {
   const [showOnlyActive, setShowOnlyActive] = useState(false);
   const [sortBy, setSortBy] = useState('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-  const [selectedTorrents, setSelectedTorrents] = useState(new Set<number>());
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -31,7 +31,6 @@ function Main() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const lastSelectedId = useRef<number | null>(null);
   const [initialFiles, setInitialFiles] = useState<File[]>([]);
   const [initialMagnets, setInitialMagnets] = useState('');
 
@@ -127,40 +126,7 @@ function Main() {
     return sortedResult;
   }, [searchTerm, filterStatus, showOnlyActive, sortBy, sortDirection, torrents, fuse]);
 
-  const handleTorrentClick = (
-    clickedId: number,
-    isCtrlPressed: boolean,
-    isShiftPressed: boolean
-  ) => {
-    const newSelection = new Set(selectedTorrents);
-    const torrentsToSelect = processedTorrents.map((t) => t.id);
-    const lastIdx = lastSelectedId.current !== null ? torrentsToSelect.indexOf(lastSelectedId.current) : -1;
-    const clickedIdx = torrentsToSelect.indexOf(clickedId);
-
-    if (isShiftPressed && lastIdx !== -1) {
-      const start = Math.min(lastIdx, clickedIdx);
-      const end = Math.max(lastIdx, clickedIdx);
-      for (let i = start; i <= end; i++) {
-        newSelection.add(torrentsToSelect[i]);
-      }
-    } else if (isCtrlPressed) {
-      if (newSelection.has(clickedId)) {
-        newSelection.delete(clickedId);
-      } else {
-        newSelection.add(clickedId);
-      }
-    } else {
-      if (newSelection.has(clickedId) && newSelection.size === 1) {
-        newSelection.clear();
-      } else {
-        newSelection.clear();
-        newSelection.add(clickedId);
-      }
-    }
-
-    setSelectedTorrents(newSelection);
-    lastSelectedId.current = clickedId;
-  };
+  const { selectedTorrents, setSelectedTorrents, handleTorrentClick } = useTorrentSelection(processedTorrents);
 
   useEffect(() => {
     if (!transmission) return;
@@ -212,7 +178,7 @@ function Main() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [processedTorrents]);
+  }, [processedTorrents, setSelectedTorrents]);
 
   const handleStartAll = async () => {
     if (!transmission) return;

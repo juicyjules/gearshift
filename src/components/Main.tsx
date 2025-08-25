@@ -39,20 +39,6 @@ function Main() {
     setNotification({ message, type });
   };
 
-  const fetchTorrents = async () => {
-    if (torrents.length === 0) setIsLoading(true);
-    try {
-      const response = await transmission.torrents({ fields: TorrentOverviewFields });
-      if (response.torrents) {
-        setTorrents(response.torrents as TorrentOverview[]);
-      }
-    } catch {
-      setError('Failed to fetch torrents');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
@@ -272,6 +258,7 @@ function Main() {
       handleStartAll();
     }
   };
+  
 
   const handleDeleteClick = () => {
     if (selectedTorrents.size > 0) {

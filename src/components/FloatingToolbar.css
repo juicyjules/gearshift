@@ -16,13 +16,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding:0;
   font-size: 1.5rem;
   color: white;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s, transform 0.2s ease-out;
 }
-
+.fab-button svg {
+  height:1rem;
+}
 .fab-button:hover {
   transform: scale(1.05);
 }
@@ -38,27 +41,22 @@
 .fab-button.add:hover {
   background-color: #0b5ed7;
 }
+.fab-button.select-all {
+  background-color: #0d6efd;
+}
+
+.fab-button.select-all:hover {
+  background-color: #0b5ed7;
+}
 
 .fab-button.delete {
   background-color: #dc3545;
-  animation: fab-fade-in 0.2s ease-out;
-}
 
-@keyframes fab-fade-in {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 
 .fab-button.delete:hover {
   background-color: #c82333;
 }
-
 .fab-button:disabled {
   background-color: #6c757d;
   cursor: not-allowed;

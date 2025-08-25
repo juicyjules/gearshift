@@ -18,8 +18,8 @@ export const TransmissionProvider: React.FC<TransmissionProviderProps> = ({ chil
       host: TRANSMISSION_HOST,
       port: TRANSMISSION_PORT,
       ssl: false,
-      username: 'juicyjules',
-      password: 'oMHn94QeiJdcQiRnqLQY4o4XB4JC',
+      username: import.meta.env.TRANMISSION_USER || '',
+      password: import.meta.env.TRANSMISSION_PASSWORD || '',
     });
   }, []);
 

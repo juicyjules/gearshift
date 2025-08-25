@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import './AddTorrentModal.css';
 
 interface AddTorrentModalProps {
@@ -9,8 +9,6 @@ interface AddTorrentModalProps {
 }
 
 type ActiveTab = 'files' | 'magnets';
-
-import React, { useState, useCallback, useEffect } from 'react';
 
 const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
   onAdd,

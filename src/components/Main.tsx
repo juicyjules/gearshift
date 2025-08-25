@@ -5,6 +5,7 @@ import SettingsModal from './SettingsModal';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import AddTorrentModal from './AddTorrentModal';
 import Notification from './Notification';
+import FloatingToolbar from './FloatingToolbar';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentOverview, TorrentOverviewFields } from '../entities/TorrentOverview';
 import Fuse from 'fuse.js';
@@ -52,19 +53,26 @@ function Main() {
     e.preventDefault();
     setIsDragging(false);
 
+    // Check for dropped .torrent files first
     const droppedFiles = Array.from(e.dataTransfer.files).filter(file =>
       file.name.endsWith('.torrent')
     );
 
     if (droppedFiles.length > 0) {
       setInitialFiles(droppedFiles);
+      setInitialMagnets('');
       setIsAddModalOpen(true);
       return;
     }
 
-    const droppedText = e.dataTransfer.getData('text/plain');
-    if (droppedText && droppedText.startsWith('magnet:')) {
-      setInitialMagnets(droppedText);
+    // If no files, check for magnet links in text data
+    const droppedText = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain');
+    const magnetRegex = /magnet:\?xt=urn:[a-z0-9]+:[a-z0-9]{32,40}/gi;
+    const foundMagnets = droppedText.match(magnetRegex);
+
+    if (foundMagnets && foundMagnets.length > 0) {
+      setInitialFiles([]);
+      setInitialMagnets(foundMagnets.join('\n'));
       setIsAddModalOpen(true);
     }
   };
@@ -298,9 +306,6 @@ function Main() {
         onSettingsClick={() => setIsSettingsOpen(true)}
         onStartAll={handleStartAll}
         onStopAll={handleStopAll}
-        selectedCount={selectedTorrents.size}
-        onDeleteClick={handleDeleteClick}
-        onAddClick={handleAddClick}
       />
       <div className="app-container">
         <TorrentList
@@ -311,6 +316,11 @@ function Main() {
           onTorrentClick={handleTorrentClick}
         />
       </div>
+      <FloatingToolbar
+        selectedCount={selectedTorrents.size}
+        onAddClick={handleAddClick}
+        onDeleteClick={handleDeleteClick}
+      />
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
       {isDeleteModalOpen && (
         <DeleteConfirmationModal

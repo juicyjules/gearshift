@@ -15,14 +15,15 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
 }) => {
   return (
     <div className="floating-toolbar">
-      <button
-        className="fab-button delete"
-        onClick={onDeleteClick}
-        disabled={selectedCount === 0}
-        title="Delete selected torrents"
-      >
-        <FaTrash />
-      </button>
+      {selectedCount > 0 && (
+        <button
+          className="fab-button delete"
+          onClick={onDeleteClick}
+          title="Delete selected torrents"
+        >
+          <FaTrash />
+        </button>
+      )}
       <button
         className="fab-button add"
         onClick={onAddClick}

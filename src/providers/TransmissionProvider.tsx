@@ -4,7 +4,7 @@ import { TransmissionContext } from '../contexts/TransmissionContext';
 
 // --- Configuration ---
 // It's best to use environment variables for this
-const TRANSMISSION_HOST = import.meta.env.VITE_TRANSMISSION_HOST || 'localhost';
+const TRANSMISSION_HOST = import.meta.env.VITE_TRANSMISSION_HOST || '10.100.0.69';
 const TRANSMISSION_PORT = Number(import.meta.env.VITE_TRANSMISSION_PORT) || 9091;
 
 interface TransmissionProviderProps {

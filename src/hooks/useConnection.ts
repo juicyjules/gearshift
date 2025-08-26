@@ -1,14 +1,37 @@
 import { useState, useEffect, useCallback } from 'react';
 import { TransmissionClient } from '../transmission-rpc/transmission';
+import { u } from 'motion/react-client';
+import { SiSlack } from 'react-icons/si';
 
 export interface ConnectionSettings {
   host: string;
   port: number;
   username?: string;
   password?: string;
+  protocol?: string;
 }
+interface UrlParts {
+  ssl: boolean;
+  host: string;
+  port: number;
+};
 
 const SETTINGS_STORAGE_KEY = 'transmission-web-client-settings';
+export function parseUrl(urlString: string): UrlParts | null {
+  try {
+    if (!urlString.includes("http")) urlString = "http://" + urlString;
+    const url = new URL(urlString);
+
+    return {
+      ssl: url.protocol.slice(0, -1) === "https" ? true : false,
+      host: url.hostname,
+      port: Number(url.port),
+    };
+  } catch (error) {
+    console.error(`Invalid URL provided: "${urlString}"`);
+    return null;
+  }
+};
 
 export const useConnection = () => {
   const [settings, setSettings] = useState<ConnectionSettings | null>(null);
@@ -29,12 +52,15 @@ export const useConnection = () => {
   const connect = useCallback(async (connectionSettings: ConnectionSettings) => {
     setError(null);
     try {
-      const client = new TransmissionClient({
-        host: connectionSettings.host,
-        port: connectionSettings.port,
-        username: connectionSettings.username,
-        password: connectionSettings.password,
-      });
+      const url = parseUrl(connectionSettings.host)
+      if (url) {
+         const client = new TransmissionClient({
+          host: url.host,
+          port: url.port,
+          ssl: url.ssl,
+          username: connectionSettings.username,
+          password: connectionSettings.password,
+        });
 
       // Test connection by fetching session info
       await client.session();
@@ -46,6 +72,7 @@ export const useConnection = () => {
       setTransmission(client);
       setSettings(connectionSettings);
       setIsConnected(true);
+      }
     } catch (e) {
       console.error('Connection failed:', e);
       setError('Failed to connect to Transmission. Please check your settings.');

@@ -255,8 +255,6 @@ function Main() {
     setIsAddModalOpen(true);
   };
 
-  const parentRef = useRef<HTMLDivElement>(null);
-
   return (
     <Dropzone onDrop={handleDropEvent}>
       <div className="App">
@@ -274,31 +272,22 @@ function Main() {
         areAnyTorrentsActive={areAnyTorrentsActive}
         onToggleAllClick={handleToggleAllClick}
       />
-        <div
-          ref={parentRef}
-          className="app-container"
-          style={{
-            height: `calc(100vh - 80px)`,
-            overflow: 'auto',
-            padding: '0 1.5rem',
-          }}
-        >
-          <TorrentList
-            torrents={processedTorrents}
-            isLoading={isLoading}
-            error={error}
-            selectedTorrents={selectedTorrents}
-            onTorrentClick={handleTorrentClick}
-            parentRef={parentRef}
-          />
-        </div>
-        <FloatingToolbar
-          selectedCount={selectedTorrents.size}
-          onAddClick={handleAddClick}
-          onDeleteClick={handleDeleteClick}
-          onSelectAllClick={handleToggleSelectAll}
-          isAllSelected={isAllVisibleSelected}
+      <div className="app-container">
+        <TorrentList
+          torrents={processedTorrents}
+          isLoading={isLoading}
+          error={error}
+          selectedTorrents={selectedTorrents}
+          onTorrentClick={handleTorrentClick}
         />
+      </div>
+      <FloatingToolbar
+        selectedCount={selectedTorrents.size}
+        onAddClick={handleAddClick}
+        onDeleteClick={handleDeleteClick}
+        onSelectAllClick={handleToggleSelectAll}
+        isAllSelected={isAllVisibleSelected}
+      />
       <AnimatePresence>
         {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
         {isDeleteModalOpen && (

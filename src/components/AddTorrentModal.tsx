@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { FaPlus } from 'react-icons/fa';
+import Modal from './Modal'; // Import the generic modal
 import './AddTorrentModal.css';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type AddTorrentResponse } from '../transmission-rpc/types';
@@ -166,12 +167,21 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
   };
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content add-torrent-modal">
-        <div className="modal-header">
-          <h2>Add Torrents</h2>
-          <button onClick={onClose} className="close-button">&times;</button>
-        </div>
+    <Modal
+      title="Add Torrents"
+      onClose={onClose}
+      footer={
+        <>
+          <button onClick={onClose} className="btn btn-secondary">
+            Cancel
+          </button>
+          <button onClick={handleAdd} className="btn btn-primary btn-with-icon">
+            <FaPlus />
+            <span>Add Torrents</span>
+          </button>
+        </>
+      }
+    >
         <div className="tab-buttons">
           <button
             className={`tab-button ${activeTab === 'files' ? 'active' : ''}`}
@@ -228,17 +238,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
             </div>
           )}
         </div>
-        <div className="modal-actions">
-          <button onClick={onClose} className="btn btn-secondary">
-            Cancel
-          </button>
-          <button onClick={handleAdd} className="btn btn-primary btn-with-icon">
-            <FaPlus />
-            <span>Add Torrents</span>
-          </button>
-        </div>
-      </div>
-    </div>
+    </Modal>
   );
 };
 

@@ -16,6 +16,7 @@ export const TransmissionProvider: React.FC<TransmissionProviderProps> = ({ chil
         initialSettings={settings}
         onSave={connect}
         error={error ?? undefined}
+        onClose={() => {}}
       />
     ) : null;
   }

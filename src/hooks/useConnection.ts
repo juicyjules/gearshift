@@ -29,7 +29,7 @@ export function parseUrl(urlString: string): UrlParts | null {
       port: port,
     };
   } catch (error) {
-    console.error(`Invalid URL provided: "${urlString}"`);
+    console.error(`Invalid URL provided: "${urlString}"`, error);
     return null;
   }
 };
@@ -39,16 +39,6 @@ export const useConnection = () => {
   const [transmission, setTransmission] = useState<TransmissionClient | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
-    if (savedSettings) {
-      const parsed = JSON.parse(savedSettings);
-      setSettings({ ...parsed, password: '' });
-    } else {
-      setSettings({ host: '', port: 9091, username: '', password: '' });
-    }
-  }, []);
 
   const connect = useCallback(async (connectionSettings: ConnectionSettings) => {
     setError(null);
@@ -80,6 +70,18 @@ export const useConnection = () => {
       setIsConnected(false);
     }
   }, []);
+
+  useEffect(() => {
+    const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if (savedSettings) {
+      const parsed = JSON.parse(savedSettings);
+      const settingsToTry = { ...parsed, password: '' };
+      setSettings(settingsToTry);
+      connect(settingsToTry);
+    } else {
+      setSettings({ host: '', port: 9091, username: '', password: '' });
+    }
+  }, [connect]);
 
   return { settings, transmission, isConnected, error, connect };
 };

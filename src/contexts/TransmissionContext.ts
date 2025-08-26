@@ -1,19 +1,17 @@
 import { createContext, useContext } from 'react';
-import { TransmissionClient } from '../transmission-rpc/transmission';
+import { type TransmissionClient } from '../transmission-rpc/transmission';
+import { type ConnectionSettings } from '../hooks/useConnection';
 
-// Define the shape of the context value
-interface TransmissionContextState {
+interface TransmissionContextType {
   transmission: TransmissionClient | null;
+  settings: ConnectionSettings | null;
+  connect: (settings: ConnectionSettings) => Promise<void>;
+  error: string | null;
 }
 
-export const TransmissionContext = createContext<TransmissionContextState>({
-  transmission: null,
-});
+export const TransmissionContext = createContext<TransmissionContextType | undefined>(undefined);
 
-/**
- * Custom hook to consume the TransmissionContext.
- */
-export const useTransmission = (): TransmissionContextState => {
+export const useTransmission = () => {
   const context = useContext(TransmissionContext);
   if (context === undefined) {
     throw new Error('useTransmission must be used within a TransmissionProvider');

@@ -26,8 +26,15 @@ export const TransmissionProvider: React.FC<TransmissionProviderProps> = ({ chil
     );
   }
 
+  const contextValue = {
+    transmission,
+    settings,
+    connect,
+    error,
+  };
+
   return (
-    <TransmissionContext.Provider value={{ transmission }}>
+    <TransmissionContext.Provider value={contextValue}>
       {children}
     </TransmissionContext.Provider>
   );

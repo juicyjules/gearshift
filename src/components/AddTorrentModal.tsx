@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { FaPlus } from 'react-icons/fa';
 import Modal from './Modal'; // Import the generic modal
 import './AddTorrentModal.css';
@@ -172,13 +173,13 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
       onClose={onClose}
       footer={
         <>
-          <button onClick={onClose} className="btn btn-secondary">
+          <motion.button onClick={onClose} className="btn btn-secondary" whileTap={{ scale: 0.95 }}>
             Cancel
-          </button>
-          <button onClick={handleAdd} className="btn btn-primary btn-with-icon">
+          </motion.button>
+          <motion.button onClick={handleAdd} className="btn btn-primary btn-with-icon" whileTap={{ scale: 0.95 }}>
             <FaPlus />
             <span>Add Torrents</span>
-          </button>
+          </motion.button>
         </>
       }
     >
@@ -234,7 +235,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
                 onChange={(e) => setMagnets(e.target.value)}
                 onPaste={(e) => handleMagnetPaste(e.clipboardData.getData('text'))}
               />
-               <button onClick={handleAddMagnetsFromTextArea} className="btn btn-secondary">Add Links</button>
+               <motion.button onClick={handleAddMagnetsFromTextArea} className="btn btn-secondary" whileTap={{ scale: 0.95 }}>Add Links</motion.button>
             </div>
           )}
         </div>

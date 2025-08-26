@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { type ConnectionSettings } from '../hooks/useConnection';
 import Modal from './Modal'; // Import the generic modal
 import './SettingsForm.css'; // Keep the form styles
@@ -28,7 +29,14 @@ const ConnectionSettingsModal: React.FC<ConnectionSettingsModalProps> = ({ onSav
       title="Connection Settings"
       onClose={onClose}
       footer={
-        <button type="submit" form="connection-form" className="save-button">Connect</button>
+        <motion.button
+          type="submit"
+          form="connection-form"
+          className="save-button"
+          whileTap={{ scale: 0.95 }}
+        >
+          Connect
+        </motion.button>
       }
     >
       <form id="connection-form" onSubmit={handleSubmit}>

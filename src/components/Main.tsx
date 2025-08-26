@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import TorrentList from './TorrentList';
 import Navbar from './Navbar';
 import SettingsModal from './SettingsModal';
@@ -271,21 +272,23 @@ function Main() {
         onAddClick={handleAddClick}
         onDeleteClick={handleDeleteClick}
       />
-      {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
-      {isDeleteModalOpen && (
-        <DeleteConfirmationModal
-          torrentCount={selectedTorrents.size}
-          onConfirm={handleDeleteConfirm}
-          onCancel={() => setIsDeleteModalOpen(false)}
-        />
-      )}
-      {isAddModalOpen && (
-        <AddTorrentModal
-          onClose={() => setIsAddModalOpen(false)}
-          initialFiles={initialFiles}
-          initialMagnets={initialMagnets}
-        />
-      )}
+      <AnimatePresence>
+        {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
+        {isDeleteModalOpen && (
+          <DeleteConfirmationModal
+            torrentCount={selectedTorrents.size}
+            onConfirm={handleDeleteConfirm}
+            onCancel={() => setIsDeleteModalOpen(false)}
+          />
+        )}
+        {isAddModalOpen && (
+          <AddTorrentModal
+            onClose={() => setIsAddModalOpen(false)}
+            initialFiles={initialFiles}
+            initialMagnets={initialMagnets}
+          />
+        )}
+      </AnimatePresence>
       {notification && (
         <Notification
           message={notification.message}

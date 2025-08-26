@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog, FaPlayCircle, FaPauseCircle } from 'react-icons/fa';
 import './Navbar.css';
 import CustomDropdown from './CustomDropdown';
@@ -72,13 +73,14 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
           <h1 className="navbar-brand">GEARSHIFT</h1>
         </div>
         <div className="global-controls">
-          <button
+          <motion.button
             className="global-control-button"
             onClick={onToggleAllClick}
             title={areAnyTorrentsActive ? 'Stop all filtered torrents' : 'Start all filtered torrents'}
+            whileTap={{ scale: 0.9 }}
           >
             {areAnyTorrentsActive ? <FaPauseCircle /> : <FaPlayCircle />}
-          </button>
+          </motion.button>
         </div>
         <div className="navbar-search">
           <input
@@ -93,7 +95,11 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
       <div className="navbar-right">
         <div className="navbar-controls">
           <CustomDropdown
-            trigger={<button className="control-button"><FaFilter /></button>}
+            trigger={
+              <motion.button className="control-button" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <FaFilter />
+              </motion.button>
+            }
             options={[
               { value: 'all', label: 'All Statuses' },
               ...Object.values(TorrentStatus)
@@ -107,7 +113,11 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
           />
           <div className="control-group">
             <CustomDropdown
-              trigger={<button className="control-button"><FaSort /></button>}
+              trigger={
+                <motion.button className="control-button" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                  <FaSort />
+                </motion.button>
+              }
               options={[
                 { value: 'name', label: 'Name' },
                 { value: 'totalSize', label: 'Size' },
@@ -115,12 +125,13 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
               ]}
               onSelect={(value) => onSortByChange(value as string)}
             />
-            <button
+            <motion.button
               className="sort-direction-button"
               onClick={() => onSortDirectionChange(sortDirection === 'asc' ? 'desc' : 'asc')}
+              whileTap={{ scale: 0.9 }}
             >
               {sortDirection === 'asc' ? <FaSortAmountUp /> : <FaSortAmountDown />}
-            </button>
+            </motion.button>
           </div>
         </div>
         <div className="navbar-stats">
@@ -130,18 +141,19 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
             <>
               <span className="stat-item"><FaArrowDown /> {formatBytes(stats.downloadSpeed)}/s</span>
               <span className="stat-item"><FaArrowUp /> {formatBytes(stats.uploadSpeed)}/s</span>
-              <button
+              <motion.button
                 className={`stat-active ${showOnlyActive ? 'active' : ''}`}
                 onClick={() => onShowOnlyActiveChange(!showOnlyActive)}
+                whileTap={{ scale: 0.95 }}
               >
                 Active: {stats.activeTorrentCount}
-              </button>
+              </motion.button>
             </>
           )}
         </div>
-        <button className="settings-button" onClick={onSettingsClick}>
+        <motion.button className="settings-button" onClick={onSettingsClick} whileTap={{ scale: 0.9 }}>
           <FaCog />
-        </button>
+        </motion.button>
       </div>
     </header>
   );

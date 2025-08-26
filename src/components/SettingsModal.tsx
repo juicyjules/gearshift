@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type GetSessionResponse } from '../transmission-rpc/types';
 import Modal from './Modal'; // Import the generic modal
@@ -62,8 +63,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
       onClose={onClose}
       footer={
         <>
-          <button className="cancel-button" onClick={onClose}>Cancel</button>
-          <button className="save-button" onClick={handleSave}>Save</button>
+          <motion.button className="cancel-button" onClick={onClose} whileTap={{ scale: 0.95 }}>Cancel</motion.button>
+          <motion.button className="save-button" onClick={handleSave} whileTap={{ scale: 0.95 }}>Save</motion.button>
         </>
       }
     >

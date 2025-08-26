@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import './CustomDropdown.css';
 
 interface DropdownOption {
@@ -34,20 +35,35 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({ trigger, options, onSel
     };
   }, []);
 
+  const menuVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -10 },
+  };
+
   return (
     <div className="custom-dropdown" ref={dropdownRef}>
       <div className="dropdown-trigger" onClick={() => setIsOpen(!isOpen)}>
         {trigger}
       </div>
-      {isOpen && (
-        <ul className="dropdown-menu">
-          {options.map((option) => (
-            <li key={option.value} onClick={() => handleSelect(option.value)}>
-              {option.label}
-            </li>
-          ))}
-        </ul>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.ul
+            className="dropdown-menu"
+            variants={menuVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={{ duration: 0.15 }}
+          >
+            {options.map((option) => (
+              <li key={option.value} onClick={() => handleSelect(option.value)}>
+                {option.label}
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

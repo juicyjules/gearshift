@@ -1,0 +1,42 @@
+.tracker-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tracker-item:last-child {
+  border-bottom: none;
+}
+
+.tracker-main {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.tracker-url {
+  font-weight: 600;
+  color: var(--text-color);
+  word-break: break-all;
+}
+
+.tracker-stats {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-color-secondary);
+}
+
+.tracker-status {
+  font-weight: bold;
+}
+
+.status-success {
+  color: var(--success-color);
+}
+
+.status-error {
+  color: var(--error-color);
+}

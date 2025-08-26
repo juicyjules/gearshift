@@ -5,6 +5,7 @@ import {
 } from 'react-icons/fa';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentDetails } from '../entities/TorrentDetails';
+import TrackerItem from './TrackerItem'; // Import the new component
 import './TorrentDetailView.css';
 
 const formatBytes = (bytes: number, decimals: number = 2): string => {
@@ -73,6 +74,9 @@ const TorrentDetailView: React.FC<TorrentDetailViewProps> = ({ torrent }) => {
     }
   };
 
+  const trackers = torrent.trackers || [];
+  const trackerStats = torrent.trackerStats || [];
+
   return (
     <div className="torrent-detail-view">
       <div className="detail-section">
@@ -123,11 +127,12 @@ const TorrentDetailView: React.FC<TorrentDetailViewProps> = ({ torrent }) => {
         </div>
 
         <div className="detail-section">
-          <h5 className="detail-section-title">Trackers</h5>
+          <h5 className="detail-section-title">Trackers ({trackers.length})</h5>
           <ul className="detail-list tracker-list">
-            {torrent.trackers?.map((tracker) => (
-              <li key={tracker.id}>{tracker.announce}</li>
-            ))}
+            {trackerStats.map((stat, index) => {
+              const tracker = trackers[index];
+              return tracker ? <TrackerItem key={tracker.id} tracker={tracker} trackerStat={stat} /> : null;
+            })}
           </ul>
         </div>
       </div>

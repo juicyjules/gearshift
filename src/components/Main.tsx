@@ -119,6 +119,12 @@ function Main() {
           return (a.totalSize - b.totalSize) * dir;
         case 'percentDone':
           return (a.percentDone - b.percentDone) * dir;
+        case 'rateDownload':
+          return (a.rateDownload - b.rateDownload) * dir;
+        case 'rateUpload':
+          return (a.rateUpload - b.rateUpload) * dir;
+        case 'uploadRatio':
+          return (a.uploadRatio - b.uploadRatio) * dir;
         default:
           return 0;
       }

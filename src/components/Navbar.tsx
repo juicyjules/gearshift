@@ -122,6 +122,9 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
                 { value: 'name', label: 'Name' },
                 { value: 'totalSize', label: 'Size' },
                 { value: 'percentDone', label: 'Progress' },
+                { value: 'rateDownload', label: 'Download Speed' },
+                { value: 'rateUpload', label: 'Upload Speed' },
+                { value: 'uploadRatio', label: 'Ratio' },
               ]}
               onSelect={(value) => onSortByChange(value as string)}
             />

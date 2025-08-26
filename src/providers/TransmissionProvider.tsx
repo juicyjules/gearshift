@@ -1,27 +1,24 @@
-import React, { useMemo, type ReactNode } from 'react';
-import { TransmissionClient } from '../transmission-rpc/transmission';
+import React, { type ReactNode } from 'react';
 import { TransmissionContext } from '../contexts/TransmissionContext';
-
-// --- Configuration ---
-// It's best to use environment variables for this
-const TRANSMISSION_HOST = import.meta.env.VITE_TRANSMISSION_HOST || '10.100.0.69';
-const TRANSMISSION_PORT = Number(import.meta.env.VITE_TRANSMISSION_PORT) || 9091;
+import { useConnection } from '../hooks/useConnection';
+import ConnectionSettingsModal from '../components/ConnectionSettingsModal';
 
 interface TransmissionProviderProps {
   children: ReactNode;
 }
 
 export const TransmissionProvider: React.FC<TransmissionProviderProps> = ({ children }) => {
-  // useMemo ensures the Transmission client is instantiated only once.
-  const transmission = useMemo(() => {
-    return new TransmissionClient({
-      host: TRANSMISSION_HOST,
-      port: TRANSMISSION_PORT,
-      ssl: false,
-      username: import.meta.env.TRANMISSION_USER || '',
-      password: import.meta.env.TRANSMISSION_PASSWORD || '',
-    });
-  }, []);
+  const { settings, transmission, isConnected, error, connect } = useConnection();
+
+  if (!isConnected || !transmission) {
+    return settings ? (
+      <ConnectionSettingsModal
+        initialSettings={settings}
+        onSave={connect}
+        error={error ?? undefined}
+      />
+    ) : null;
+  }
 
   return (
     <TransmissionContext.Provider value={{ transmission }}>

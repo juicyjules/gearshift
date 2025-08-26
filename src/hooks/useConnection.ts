@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { TransmissionClient } from '../transmission-rpc/transmission';
-import { u } from 'motion/react-client';
-import { SiSlack } from 'react-icons/si';
 
 export interface ConnectionSettings {
   host: string;

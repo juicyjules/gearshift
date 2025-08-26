@@ -55,6 +55,7 @@
 .torrent-main-info {
   flex-grow: 1;
   min-width: 300px;
+  max-width:66%;
 }
 
 .torrent-name {
@@ -64,6 +65,7 @@
   font-weight: 600;
   color: var(--text-color);
   word-break: break-all;
+  text-overflow: ellipsis;
 }
 
 .progress-bar {

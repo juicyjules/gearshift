@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import './AddTorrentModal.css';
 import { useTransmission } from '../contexts/TransmissionContext';
@@ -29,6 +29,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
   const [activeTab, setActiveTab] = useState<ActiveTab>('files');
   const [magnets, setMagnets] = useState(initialMagnets);
   const [stagedTorrents, setStagedTorrents] = useState<StagedTorrent[]>([]);
+  const isSubmitted = useRef(false);
 
   const stageTorrents = useCallback(async (torrents: { metainfo?: string[]; magnets?: string[] }) => {
     if (!transmission) return;
@@ -88,6 +89,9 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
   // Cleanup effect to remove staged torrents if the modal is closed without confirming
   useEffect(() => {
     return () => {
+      if (isSubmitted.current) {
+        return;
+      }
       const torrentsToRemove = stagedTorrents.filter(t => t.status === 'loaded').map(t => t.id);
       if (torrentsToRemove.length > 0 && transmission) {
         console.log('Cleaning up staged torrents:', torrentsToRemove);
@@ -138,12 +142,11 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
   };
 
   const handleAdd = async () => {
+    isSubmitted.current = true;
     const torrentIdsToStart = stagedTorrents.filter(t => t.status === 'loaded').map(t => t.id);
     if (torrentIdsToStart.length > 0 && transmission) {
       await transmission.start(torrentIdsToStart);
     }
-    // Set stagedTorrents to empty to prevent cleanup hook from removing them
-    setStagedTorrents([]);
     onClose();
   };
 

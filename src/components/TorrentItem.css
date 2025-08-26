@@ -46,16 +46,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
   cursor: pointer;
   padding: 1rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .torrent-main-info {
   flex-grow: 1;
   min-width: 300px;
-  max-width:66%;
 }
 
 .torrent-name {

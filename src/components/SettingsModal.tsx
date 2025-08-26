@@ -76,11 +76,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                   <div className="form-grid">
                     <div className="form-group">
                       <label htmlFor="speed-limit-down">Download Speed Limit (KB/s)</label>
-                      <input type="number" id="speed-limit-down" name="speed-limit-down" value={settings['speedLimitDown']} onChange={handleChange} />
+                      <input type="number" id="speed-limit-down" name="speedLimitDown" value={settings['speedLimitDown']} onChange={handleChange} />
                     </div>
                     <div className="form-group">
                       <label htmlFor="speed-limit-down-enabled">Enable Download Speed Limit</label>
-                      <input type="checkbox" id="speed-limit-down-enabled" name="speed-limit-down-enabled" checked={settings['speedLimitDownEnabled']} onChange={handleChange} />
+                      <input type="checkbox" id="speed-limit-down-enabled" name="speedLimitDownEnabled" checked={settings['speedLimitDownEnabled']} onChange={handleChange} />
                     </div>
                   </div>
                 )}
@@ -100,15 +100,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                     <div className="form-grid">
                         <div className="form-group">
                             <label htmlFor="download-dir">Download Directory</label>
-                            <input type="text" id="download-dir" name="download-dir" value={settings['downloadDir']} onChange={handleChange} />
+                            <input type="text" id="download-dir" name="downloadDir" value={settings['downloadDir']} onChange={handleChange} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="download-queue-enabled">Enable Download Queue</label>
-                            <input type="checkbox" id="download-queue-enabled" name="download-queue-enabled" checked={settings['downloadQueueEnabled']} onChange={handleChange} />
+                            <input type="checkbox" id="download-queue-enabled" name="downloadQueueEnabled" checked={settings['downloadQueueEnabled']} onChange={handleChange} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="download-queue-size">Download Queue Size</label>
-                            <input type="number" id="download-queue-size" name="download-queue-size" value={settings['downloadQueueSize']} onChange={handleChange} />
+                            <input type="number" id="download-queue-size" name="downloadQueueSize" value={settings['downloadQueueSize']} onChange={handleChange} />
                         </div>
                     </div>
                 )}
@@ -116,7 +116,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                     <div className="form-grid">
                         <div className="form-group">
                             <label htmlFor="peer-port">Peer Port</label>
-                            <input type="number" id="peer-port" name="peer-port" value={settings['peerPort']} onChange={handleChange} />
+                            <input type="number" id="peer-port" name="peerPort" value={settings['peerPort']} onChange={handleChange} />
                         </div>
                     </div>
                 )}

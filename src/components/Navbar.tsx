@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog, FaPlayCircle, FaPauseCircle } from 'react-icons/fa';
 import './Navbar.css';
 import CustomDropdown from './CustomDropdown';
@@ -38,26 +38,30 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
 }, ref) => {
   const { transmission } = useTransmission();
   const [stats, setStats] = useState<SessionStatsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Start with loading true
   const [error, setError] = useState<string | null>(null);
+  const initialFetchDone = useRef(false);
 
   useEffect(() => {
     if (!transmission) return;
-    if (!stats) setIsLoading(true);
+
     const fetchStats = async () => {
-      // Only set loading on the initial fetch
       try {
         const response = await transmission.stats();
         setStats(response);
       } catch {
         setError('Failed to fetch session stats');
       } finally {
-        setIsLoading(false);
+        // Only stop loading indicator after the first fetch
+        if (!initialFetchDone.current) {
+          setIsLoading(false);
+          initialFetchDone.current = true;
+        }
       }
     };
 
-    fetchStats();
-    const intervalId = setInterval(fetchStats, 750); // Refresh every 5 seconds
+    fetchStats(); // Initial fetch
+    const intervalId = setInterval(fetchStats, 750); // Refresh every 750ms
     return () => clearInterval(intervalId);
   }, [transmission]);
 

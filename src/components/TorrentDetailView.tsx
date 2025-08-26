@@ -42,14 +42,14 @@ const TorrentDetailView: React.FC<TorrentDetailViewProps> = ({ torrent }) => {
   const [selectedFiles, setSelectedFiles] = useState<boolean[]>([]);
 
   const files = torrent.files || [];
-  const fileStats = torrent.fileStats || [];
   const filesToShow = filesExpanded ? files : files.slice(0, 5);
 
   useEffect(() => {
+    const fileStats = torrent.fileStats || [];
     if (fileStats.length > 0) {
       setSelectedFiles(fileStats.map(stat => stat.wanted));
     }
-  }, [fileStats]);
+  }, [torrent.fileStats]);
 
   const handleFileCheck = async (index: number, checked: boolean) => {
     const newSelectedFiles = [...selectedFiles];

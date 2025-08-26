@@ -1,26 +1,32 @@
 import React from 'react';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaCheckDouble, FaListUl } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 import './FloatingToolbar.css';
-import {motion, AnimatePresence } from 'motion/react';
+
 interface FloatingToolbarProps {
   selectedCount: number;
   onAddClick: () => void;
   onDeleteClick: () => void;
+  onSelectAllClick: () => void;
+  isAllSelected: boolean;
 }
 
 const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
   selectedCount,
   onAddClick,
   onDeleteClick,
+  onSelectAllClick,
+  isAllSelected,
 }) => {
   return (
     <div className="floating-toolbar">
-      <AnimatePresence >
+      <AnimatePresence>
         {selectedCount > 0 && (
-          <motion.button 
+          <motion.button
+            key="delete"
             initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale:1 }}
-            exit={{ opacity: 0, scale:0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.5 }}
             className="fab-button delete"
             onClick={onDeleteClick}
             title="Delete selected torrents"
@@ -29,13 +35,22 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
           </motion.button>
         )}
       </AnimatePresence>
-      <button
+      <motion.button
+        className="fab-button select-all"
+        onClick={onSelectAllClick}
+        title={isAllSelected ? 'Deselect all' : 'Select all'}
+        whileTap={{ scale: 0.9 }}
+      >
+        {isAllSelected ? <FaListUl /> : <FaCheckDouble />}
+      </motion.button>
+      <motion.button
         className="fab-button add"
         onClick={onAddClick}
         title="Add new torrent"
+        whileTap={{ scale: 0.9 }}
       >
         <FaPlus />
-      </button>
+      </motion.button>
     </div>
   );
 };

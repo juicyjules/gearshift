@@ -129,6 +129,20 @@ function Main() {
 
   const { selectedTorrents, setSelectedTorrents, handleTorrentClick } = useTorrentSelection(processedTorrents);
 
+  const isAllVisibleSelected = useMemo(() => {
+    if (processedTorrents.length === 0) return false;
+    return selectedTorrents.size === processedTorrents.length;
+  }, [selectedTorrents, processedTorrents]);
+
+  const handleToggleSelectAll = () => {
+    if (isAllVisibleSelected) {
+      setSelectedTorrents(new Set());
+    } else {
+      const allVisibleIds = new Set(processedTorrents.map(t => t.id));
+      setSelectedTorrents(allVisibleIds);
+    }
+  };
+
   useEffect(() => {
     if (!transmission) return;
 
@@ -271,6 +285,8 @@ function Main() {
         selectedCount={selectedTorrents.size}
         onAddClick={handleAddClick}
         onDeleteClick={handleDeleteClick}
+        onSelectAllClick={handleToggleSelectAll}
+        isAllSelected={isAllVisibleSelected}
       />
       <AnimatePresence>
         {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}

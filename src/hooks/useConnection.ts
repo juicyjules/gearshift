@@ -19,11 +19,14 @@ export function parseUrl(urlString: string): UrlParts | null {
   try {
     if (!urlString.includes("http")) urlString = "http://" + urlString;
     const url = new URL(urlString);
-
+    let port = Number(url.port);
+    if (port == 0) {
+      port = url.protocol === "https:" ? 443 : 80;
+    }
     return {
       ssl: url.protocol.slice(0, -1) === "https" ? true : false,
       host: url.hostname,
-      port: Number(url.port),
+      port: port,
     };
   } catch (error) {
     console.error(`Invalid URL provided: "${urlString}"`);

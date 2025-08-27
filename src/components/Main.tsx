@@ -280,7 +280,7 @@ function Main() {
     setIsAddModalOpen(true);
   };
 
-  const parentRef = useRef<HTMLDivElement>(new HTMLDivElement());
+  const parentRef = useRef<HTMLDivElement>(null);
 
   return (
     <Dropzone onDrop={handleDropEvent}>

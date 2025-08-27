@@ -11,7 +11,7 @@ interface TorrentListProps {
   error: string | null;
   selectedTorrents: Set<number>;
   onTorrentClick: (id: number, isCtrlPressed: boolean, isShiftPressed: boolean) => void;
-  parentRef: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const TorrentList: React.FC<TorrentListProps> = ({

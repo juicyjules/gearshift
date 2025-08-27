@@ -44,7 +44,7 @@ const TorrentList: React.FC<TorrentListProps> = ({
   const torrentVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, x: -50 },
+    exit: { opacity: 0, x: -50, transition: { duration: 0.2 } },
   };
 
   return (
@@ -61,8 +61,7 @@ const TorrentList: React.FC<TorrentListProps> = ({
           const torrent = torrents[virtualItem.index];
           return (
             <motion.div
-              key={torrent.id} // Key should be stable for AnimatePresence
-              layout
+              key={torrent.id}
               variants={torrentVariants}
               initial="hidden"
               animate="visible"

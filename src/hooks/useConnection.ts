@@ -28,7 +28,7 @@ export function parseUrl(urlString: string): UrlParts | null {
       host: url.hostname,
       port: port,
     };
-  } catch (error) {
+  } catch {
     console.error(`Invalid URL provided: "${urlString}"`);
     return null;
   }

@@ -147,20 +147,39 @@ function Main() {
     if (!transmission) return;
 
     const fetchTorrents = async () => {
-      if (torrents.length === 0) setIsLoading(true);
+      // Only show the main loading spinner on the very first fetch.
+      if (torrents.length === 0) {
+        setIsLoading(true);
+      }
+
       try {
         const response = await transmission.torrents({ fields: TorrentOverviewFields });
         if (response.torrents) {
           setTorrents(response.torrents as TorrentOverview[]);
+          // If a fetch succeeds, clear any previous error state.
+          if (error) {
+            setError(null);
+          }
         }
       } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
+        console.error('Fetch error:', err); // Keep logging for debugging.
+
+        if (torrents.length === 0) {
+          // If the initial fetch fails, show the main error screen.
+          if (err instanceof Error) {
+            setError(err.message);
+          } else {
+            setError('Failed to fetch torrents. Please check the connection.');
+          }
         } else {
-          setError('Failed to fetch torrents');
+          // If we already have data, just show a transient notification.
+          showNotification('Connection lost. Retrying...', 'error');
         }
       } finally {
-        setIsLoading(false);
+        // Always turn off the main loading spinner after any fetch attempt.
+        if (isLoading) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -168,7 +187,7 @@ function Main() {
     const intervalId = setInterval(fetchTorrents, 750);
 
     return () => clearInterval(intervalId);
-  }, [transmission, torrents.length]);
+  }, [transmission, torrents.length, error, isLoading]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

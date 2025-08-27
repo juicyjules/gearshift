@@ -304,7 +304,6 @@ function Main() {
           className="app-container"
           style={{
             height: `calc(100vh - 80px)`,
-            overflow: 'auto',
             padding: '0 1.5rem',
           }}
         >

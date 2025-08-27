@@ -37,14 +37,17 @@ const TorrentList: React.FC<TorrentListProps> = ({
     return <div style={{ color: 'red' }}>Error: {error}</div>;
   }
 
-  if (torrents.length === 0) {
-    return <div className="empty"> No Torrents available. </div>;
-  }
+
 
   const torrentVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-    exit: { opacity: 0, transition: { duration: 0.2 } },
+    hidden: { opacity: 0, translateX:-100},
+    visible: { opacity: 1,translateX:0, transition: {
+        duration: 0.2,
+      },
+},
+    exit: { opacity: 0, translateX:100, transition: {
+        duration: 0.2,
+      },},
   };
 
   return (
@@ -65,16 +68,9 @@ const TorrentList: React.FC<TorrentListProps> = ({
               variants={torrentVariants}
               initial="hidden"
               animate="visible"
+              layout
               exit="exit"
-              transition={{ duration: 0.3 }}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: `${virtualItem.size}px`,
-                transform: `translateY(${virtualItem.start}px)`,
-              }}
+              transition={{ duration: 0.2 }}
             >
               <TorrentItem
                 torrent={torrent}
@@ -83,8 +79,9 @@ const TorrentList: React.FC<TorrentListProps> = ({
               />
             </motion.div>
           );
-        })}
-      </AnimatePresence>
+        })} 
+      </AnimatePresence>  
+      {!torrents.length &&  <div className="empty"> No Torrents available. </div>}
     </div>
   );
 };

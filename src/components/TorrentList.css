@@ -8,4 +8,10 @@
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-color);
+  left: 0; 
+  right: 0; 
+  margin-inline: auto; 
+  width: fit-content;
+  position:absolute;
+  top:0;
 }

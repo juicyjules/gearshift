@@ -3,60 +3,111 @@
   top: 0;
   z-index: 1000;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid #e9ecef;
   margin-bottom: 1.5rem;
 }
 
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-  }
-
-  .navbar-left, .navbar-right {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .navbar-search input {
-    width: 100%;
-  }
-
-  .navbar-controls {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .navbar-stats {
-    width: 100%;
-    justify-content: space-around;
-  }
+.navbar-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .navbar-left, .navbar-right {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .navbar-brand {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #212529;
   margin: 0;
 }
 
-.navbar-search input {
-  padding: 0.6rem 0.8rem;
+/* Mobile-specific styles */
+.mobile-menu-toggle {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.desktop-controls {
+  display: none;
+}
+
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 0 0.5rem;
+  border-top: 1px solid #e9ecef;
+  margin-top: 0.75rem;
+}
+
+.mobile-menu .navbar-search input {
+  width: 100%;
+}
+
+.mobile-menu .navbar-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.mobile-menu .control-button {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.mobile-menu .control-group {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+/* Ensure the dropdown trigger in the control group doesn't stretch fully */
+.mobile-menu .control-group .control-button {
+    width: auto;
+    flex-grow: 1; /* Allow it to take up available space */
+}
+
+.mobile-menu .control-group > button,
+.mobile-menu .control-group > div > button {
+    border-radius: 6px; /* Unify border-radius */
+}
+
+.mobile-menu .sort-direction-button {
+  flex-shrink: 0;
+}
+
+.navbar-search input,
+.control-button,
+.sort-direction-button {
+  padding: 0.5rem 0.8rem;
+  font-size: 0.9rem;
   border: 1px solid #ced4da;
   border-radius: 6px;
-  font-size: 0.9rem;
+  box-sizing: border-box;
+  height: 38px; /* Explicit height for perfect alignment */
+}
+
+.navbar-search input {
   width: 250px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -72,96 +123,7 @@
   gap: 0.5rem;
 }
 
-.global-control-button {
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  color: #6c757d;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.global-control-button:hover {
-  background-color: #f8f9fa;
-  color: #212529;
-}
-
-.navbar-controls {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.control-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.sort-direction-button {
-  background: transparent;
-  color: #495057;
-  border: 1px solid #ced4da;
-  border-radius: 6px;
-  padding: 0.6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
-}
-
-.sort-direction-button:hover {
-  background-color: #f8f9fa;
-  border-color: #adb5bd;
-}
-
-.navbar-stats {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 0.9rem;
-  color: #495057;
-  font-weight: 500;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  min-width: 5em;
-  justify-content: space-between;
-}
-
-.navbar-stats .stat-active {
-  background-color: transparent;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  border: 1px solid #ced4da;
-  cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.navbar-stats .stat-active:hover {
-  background-color: #f8f9fa;
-  border-color: #adb5bd;
-}
-
-.navbar-stats .stat-active.active {
-  background-color: #e7f5ff;
-  color: #0d6efd;
-  border-color: #0d6efd;
-}
-
-.settings-button {
+.global-control-button, .settings-button {
   background: transparent;
   border: none;
   font-size: 1.2rem;
@@ -175,7 +137,118 @@
   transition: background-color 0.2s, color 0.2s;
 }
 
-.settings-button:hover {
+.global-control-button:hover, .settings-button:hover {
   background-color: #f8f9fa;
   color: #212529;
+}
+
+.navbar-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.control-button {
+    display: flex;
+    gap: .4rem;
+    align-items: center;
+    background-color: #fff;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.control-button:hover {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sort-direction-button {
+  background: #fff;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  padding: 0.5rem; /* Adjust padding to fit icon */
+}
+
+.sort-direction-button:hover {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
+}
+
+.navbar-stats {
+  display: none; /* Hidden on smallest screens */
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: #495057;
+  font-weight: 500;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.navbar-stats .stat-active {
+  background-color: transparent;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  border: 1px solid #ced4da;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+/* Tablet and larger */
+@media (min-width: 576px) {
+  .navbar-stats {
+    display: flex;
+  }
+}
+
+/* Desktop */
+@media (min-width: 992px) {
+  .navbar {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .navbar-main {
+    flex-direction: row;
+    width: 100%;
+    border-top: none;
+    margin-top: 0;
+  }
+  .navbar-left {
+    gap: 1.5rem;
+  }
+  .navbar-brand {
+    font-size: 1.5rem;
+  }
+  .mobile-menu-toggle {
+    display: none;
+  }
+  .desktop-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .navbar-controls {
+    flex-direction: row;
+  }
+  .mobile-menu {
+    display: none;
+  }
+  .navbar-stats {
+    font-size: 0.9rem;
+  }
 }

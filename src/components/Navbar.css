@@ -206,7 +206,7 @@
 
   .navbar-main {
     flex-direction: row;
-    width: auto;
+    width: 100%;
     border-top: none;
     margin-top: 0;
   }

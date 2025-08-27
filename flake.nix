@@ -23,7 +23,7 @@
 
           src = ./.;
 
-          npmDepsHash = "sha256-Jiito1y8i/kgIu1CsU/AYkd/Ifkf5Ovn/AO1c8UAkgM="; # Placeholder hash
+          npmDepsHash = "sha256-8v99vv2y73KfAGoPKZjBEXC0HX8M66iF0SdPnOFVurw="; # Placeholder hash
 
           installPhase = ''
             runHook preInstall

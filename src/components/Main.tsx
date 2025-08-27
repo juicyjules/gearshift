@@ -280,7 +280,7 @@ function Main() {
     setIsAddModalOpen(true);
   };
 
-  const parentRef = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement>(new HTMLDivElement());
 
   return (
     <Dropzone onDrop={handleDropEvent}>
@@ -308,7 +308,7 @@ function Main() {
             padding: '0 1.5rem',
           }}
         >
-          <TorrentList
+         <TorrentList
             torrents={processedTorrents}
             isLoading={isLoading}
             error={error}

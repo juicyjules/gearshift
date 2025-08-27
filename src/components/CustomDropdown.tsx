@@ -40,7 +40,6 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({ trigger, options, onSel
   useEffect(() => {
     if (isOpen && menuRef.current && dropdownRef.current) {
       const menuRect = menuRef.current.getBoundingClientRect();
-      const triggerRect = dropdownRef.current.getBoundingClientRect();
 
       let newPositionClass = '';
 

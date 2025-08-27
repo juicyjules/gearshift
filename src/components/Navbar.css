@@ -78,6 +78,18 @@
 .mobile-menu .control-group {
   display: flex;
   gap: 0.5rem;
+  width: 100%;
+}
+
+/* Ensure the dropdown trigger in the control group doesn't stretch fully */
+.mobile-menu .control-group .control-button {
+    width: auto;
+    flex-grow: 1; /* Allow it to take up available space */
+}
+
+.mobile-menu .control-group > button,
+.mobile-menu .control-group > div > button {
+    border-radius: 6px; /* Unify border-radius */
 }
 
 .mobile-menu .sort-direction-button {

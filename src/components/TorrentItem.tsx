@@ -96,26 +96,28 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorren
         onClick={handleItemClick}
         onDoubleClick={handleDoubleClick}
       >
-        <div className="torrent-controls">
-          <button
-            className={`control-button ${isRunning ? 'running' : 'paused'}`}
-            onClick={handleStartStopClick}
-          >
-            {isRunning ? <FaPause /> : <FaPlay />}
-          </button>
-        </div>
-        <div className="torrent-main-info">
-          <h3 className="torrent-name">{name}</h3>
-          <div className="progress-bar">
-            <div
-              className="progress-bar-inner"
-              style={{ width: `${progressPercent}%` }}
-            />
+        <div className="torrent-primary-info">
+          <div className="torrent-controls">
+            <button
+              className={`control-button ${isRunning ? 'running' : 'paused'}`}
+              onClick={handleStartStopClick}
+            >
+              {isRunning ? <FaPause /> : <FaPlay />}
+            </button>
           </div>
-          <div className="torrent-sub-info">
-            <span>{statusText}</span>
-            <span>{progressPercent}%</span>
-            <span>{formatBytes(totalSize)}</span>
+          <div className="torrent-main-info">
+            <h3 className="torrent-name">{name}</h3>
+            <div className="progress-bar">
+              <div
+                className="progress-bar-inner"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            <div className="torrent-sub-info">
+              <span>{statusText}</span>
+              <span>{progressPercent}%</span>
+              <span>{formatBytes(totalSize)}</span>
+            </div>
           </div>
         </div>
         <div className="torrent-stats">

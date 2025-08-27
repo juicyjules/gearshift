@@ -32,3 +32,16 @@
 .dropdown-menu li:hover {
   background-color: #f8f9fa;
 }
+
+/* Positioning modifiers */
+.dropdown-menu.align-left {
+  right: auto;
+  left: 0;
+}
+
+.dropdown-menu.opens-up {
+  top: auto;
+  bottom: 100%;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+}

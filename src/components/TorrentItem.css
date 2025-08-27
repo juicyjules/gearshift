@@ -51,6 +51,13 @@
   flex-wrap: nowrap;
 }
 
+.torrent-primary-info {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  min-width: 0; /* Allow shrinking */
+}
+
 .torrent-main-info {
   flex-grow: 1;
   min-width: 300px;
@@ -183,9 +190,8 @@
     gap: 1rem;
   }
 
-  .torrent-main-info {
+  .torrent-primary-info {
     width: 100%;
-    min-width: 0;
   }
 
   .torrent-stats {

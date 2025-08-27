@@ -80,7 +80,7 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
       <div className="navbar-controls">
         <CustomDropdown
           trigger={
-            <motion.button className="control-button" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <motion.button className="control-button">
               <FaFilter /> Filter
             </motion.button>
           }
@@ -98,7 +98,7 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
         <div className="control-group">
           <CustomDropdown
             trigger={
-              <motion.button className="control-button" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <motion.button className="control-button">
                 <FaSort /> Sort
               </motion.button>
             }
@@ -109,13 +109,12 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
             ]}
             onSelect={(value) => onSortByChange(value as string)}
           />
-          <motion.button
+          <button
             className="sort-direction-button"
             onClick={() => onSortDirectionChange(sortDirection === 'asc' ? 'desc' : 'asc')}
-            whileTap={{ scale: 0.9 }}
           >
             {sortDirection === 'asc' ? <FaSortAmountUp /> : <FaSortAmountDown />}
-          </motion.button>
+          </button>
         </div>
       </div>
     </>
@@ -129,14 +128,13 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
             <h1 className="navbar-brand">GEARSHIFT</h1>
           </div>
           <div className="global-controls">
-            <motion.button
+            <button
               className="global-control-button"
               onClick={onToggleAllClick}
               title={areAnyTorrentsActive ? 'Stop all filtered torrents' : 'Start all filtered torrents'}
-              whileTap={{ scale: 0.9 }}
             >
               {areAnyTorrentsActive ? <FaPauseCircle /> : <FaPlayCircle />}
-            </motion.button>
+            </button>
           </div>
         </div>
         <div className="navbar-right">
@@ -150,26 +148,24 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
               <>
                 <span className="stat-item"><FaArrowDown /> {formatBytes(stats.downloadSpeed)}/s</span>
                 <span className="stat-item"><FaArrowUp /> {formatBytes(stats.uploadSpeed)}/s</span>
-                <motion.button
+                <button
                   className={`stat-active ${showOnlyActive ? 'active' : ''}`}
                   onClick={() => onShowOnlyActiveChange(!showOnlyActive)}
-                  whileTap={{ scale: 0.95 }}
                 >
                   Active: {stats.activeTorrentCount}
-                </motion.button>
+                </button>
               </>
             )}
           </div>
-          <motion.button className="settings-button" onClick={onSettingsClick} whileTap={{ scale: 0.9 }}>
+          <button className="settings-button" onClick={onSettingsClick}>
             <FaCog />
-          </motion.button>
-          <motion.button
+          </button>
+          <button
             className="mobile-menu-toggle"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            whileTap={{ scale: 0.9 }}
           >
             <FaFilter />
-          </motion.button>
+          </button>
         </div>
       </div>
       {isMobileMenuOpen && (

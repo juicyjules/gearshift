@@ -143,8 +143,18 @@
 
 .control-button {
     display: flex;
-    gap: .2rem;
+    gap: .4rem;
     align-items: center;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    background-color: #fff;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.control-button:hover {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
 }
 
 .control-group {
@@ -154,7 +164,7 @@
 }
 
 .sort-direction-button {
-  background: transparent;
+  background: #fff;
   color: #495057;
   border: 1px solid #ced4da;
   border-radius: 6px;
@@ -163,6 +173,12 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.sort-direction-button:hover {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
 }
 
 .navbar-stats {

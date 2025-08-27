@@ -39,8 +39,9 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
 }, ref) => {
   const { transmission } = useTransmission();
   const [stats, setStats] = useState<SessionStatsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Start with loading true
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const initialFetchDone = useRef(false);
 
   useEffect(() => {
@@ -53,7 +54,6 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
       } catch {
         setError('Failed to fetch session stats');
       } finally {
-        // Only stop loading indicator after the first fetch
         if (!initialFetchDone.current) {
           setIsLoading(false);
           initialFetchDone.current = true;
@@ -61,100 +61,127 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
       }
     };
 
-    fetchStats(); // Initial fetch
-    const intervalId = setInterval(fetchStats, 750); // Refresh every 750ms
+    fetchStats();
+    const intervalId = setInterval(fetchStats, 750);
     return () => clearInterval(intervalId);
   }, [transmission]);
 
-  return (
-    <header className="navbar">
-      <div className="navbar-left">
-        <div className="navbar-logo">
-          <h1 className="navbar-brand">GEARSHIFT</h1>
-        </div>
-        <div className="global-controls">
-          <motion.button
-            className="global-control-button"
-            onClick={onToggleAllClick}
-            title={areAnyTorrentsActive ? 'Stop all filtered torrents' : 'Start all filtered torrents'}
-            whileTap={{ scale: 0.9 }}
-          >
-            {areAnyTorrentsActive ? <FaPauseCircle /> : <FaPlayCircle />}
-          </motion.button>
-        </div>
-        <div className="navbar-search">
-          <input
-            ref={ref}
-            type="text"
-            placeholder="Search torrents..."
-            value={searchTerm}
-            onChange={(e) => onSearchTermChange(e.target.value)}
-          />
-        </div>
+  const renderFilterControls = () => (
+    <>
+      <div className="navbar-search">
+        <input
+          ref={ref}
+          type="text"
+          placeholder="Search torrents..."
+          value={searchTerm}
+          onChange={(e) => onSearchTermChange(e.target.value)}
+        />
       </div>
-      <div className="navbar-right">
-        <div className="navbar-controls">
+      <div className="navbar-controls">
+        <CustomDropdown
+          trigger={
+            <motion.button className="control-button" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+              <FaFilter /> Filter
+            </motion.button>
+          }
+          options={[
+            { value: 'all', label: 'All Statuses' },
+            ...Object.values(TorrentStatus)
+              .filter(v => typeof v === 'number')
+              .map((status) => ({
+                value: status as number,
+                label: TorrentStatus[status as number],
+              }))
+          ]}
+          onSelect={(value) => onFilterStatusChange(value as TorrentStatus | 'all')}
+        />
+        <div className="control-group">
           <CustomDropdown
             trigger={
               <motion.button className="control-button" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                <FaFilter />
+                <FaSort /> Sort
               </motion.button>
             }
             options={[
-              { value: 'all', label: 'All Statuses' },
-              ...Object.values(TorrentStatus)
-                .filter(v => typeof v === 'number')
-                .map((status) => ({
-                  value: status as number,
-                  label: TorrentStatus[status as number],
-                }))
+              { value: 'name', label: 'Name' },
+              { value: 'totalSize', label: 'Size' },
+              { value: 'percentDone', label: 'Progress' },
             ]}
-            onSelect={(value) => onFilterStatusChange(value as TorrentStatus | 'all')}
+            onSelect={(value) => onSortByChange(value as string)}
           />
-          <div className="control-group">
-            <CustomDropdown
-              trigger={
-                <motion.button className="control-button" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                  <FaSort />
-                </motion.button>
-              }
-              options={[
-                { value: 'name', label: 'Name' },
-                { value: 'totalSize', label: 'Size' },
-                { value: 'percentDone', label: 'Progress' },
-              ]}
-              onSelect={(value) => onSortByChange(value as string)}
-            />
+          <motion.button
+            className="sort-direction-button"
+            onClick={() => onSortDirectionChange(sortDirection === 'asc' ? 'desc' : 'asc')}
+            whileTap={{ scale: 0.9 }}
+          >
+            {sortDirection === 'asc' ? <FaSortAmountUp /> : <FaSortAmountDown />}
+          </motion.button>
+        </div>
+      </div>
+    </>
+  );
+
+  return (
+    <header className={`navbar ${isMobileMenuOpen ? 'mobile-menu-open' : ''}`}>
+      <div className="navbar-main">
+        <div className="navbar-left">
+          <div className="navbar-logo">
+            <h1 className="navbar-brand">GEARSHIFT</h1>
+          </div>
+          <div className="global-controls">
             <motion.button
-              className="sort-direction-button"
-              onClick={() => onSortDirectionChange(sortDirection === 'asc' ? 'desc' : 'asc')}
+              className="global-control-button"
+              onClick={onToggleAllClick}
+              title={areAnyTorrentsActive ? 'Stop all filtered torrents' : 'Start all filtered torrents'}
               whileTap={{ scale: 0.9 }}
             >
-              {sortDirection === 'asc' ? <FaSortAmountUp /> : <FaSortAmountDown />}
+              {areAnyTorrentsActive ? <FaPauseCircle /> : <FaPlayCircle />}
             </motion.button>
           </div>
         </div>
-        <div className="navbar-stats">
-          {isLoading && <span>Loading...</span>}
-          {error && <span className="error-message">{error}</span>}
-          {stats && (
-            <>
-              <span className="stat-item"><FaArrowDown /> {formatBytes(stats.downloadSpeed)}/s</span>
-              <span className="stat-item"><FaArrowUp /> {formatBytes(stats.uploadSpeed)}/s</span>
-              <motion.button
-                className={`stat-active ${showOnlyActive ? 'active' : ''}`}
-                onClick={() => onShowOnlyActiveChange(!showOnlyActive)}
-                whileTap={{ scale: 0.95 }}
-              >
-                Active: {stats.activeTorrentCount}
-              </motion.button>
-            </>
-          )}
+        <div className="navbar-right">
+          <div className="desktop-controls">
+            {renderFilterControls()}
+          </div>
+          <div className="navbar-stats">
+            {isLoading && <span>Loading...</span>}
+            {error && <span className="error-message">{error}</span>}
+            {stats && (
+              <>
+                <span className="stat-item"><FaArrowDown /> {formatBytes(stats.downloadSpeed)}/s</span>
+                <span className="stat-item"><FaArrowUp /> {formatBytes(stats.uploadSpeed)}/s</span>
+                <motion.button
+                  className={`stat-active ${showOnlyActive ? 'active' : ''}`}
+                  onClick={() => onShowOnlyActiveChange(!showOnlyActive)}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Active: {stats.activeTorrentCount}
+                </motion.button>
+              </>
+            )}
+          </div>
+          <motion.button className="settings-button" onClick={onSettingsClick} whileTap={{ scale: 0.9 }}>
+            <FaCog />
+          </motion.button>
+          <motion.button
+            className="mobile-menu-toggle"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            whileTap={{ scale: 0.9 }}
+          >
+            <FaFilter />
+          </motion.button>
         </div>
-        <motion.button className="settings-button" onClick={onSettingsClick} whileTap={{ scale: 0.9 }}>
-          <FaCog />
-        </motion.button>
       </div>
+      {isMobileMenuOpen && (
+        <motion.div
+          className="mobile-menu"
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: 'auto', opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+        >
+          {renderFilterControls()}
+        </motion.div>
+      )}
     </header>
   );
 });

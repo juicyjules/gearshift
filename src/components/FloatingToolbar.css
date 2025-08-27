@@ -1,7 +1,7 @@
 .floating-toolbar {
   position: fixed;
   bottom: 30px;
-  right: 30px;
+  left: 30px;
   display: flex;
   flex-direction: column;
   gap: 1rem;

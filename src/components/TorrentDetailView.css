@@ -146,3 +146,17 @@
 .expand-button:hover {
   background-color: #e9ecef;
 }
+
+@media (max-width: 768px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .torrent-detail-view {
+    padding: 0.5rem;
+  }
+}

@@ -3,53 +3,85 @@
   top: 0;
   z-index: 1000;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid #e9ecef;
   margin-bottom: 1.5rem;
 }
 
-@media (max-width: 768px) {
-  .navbar {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-  }
-
-  .navbar-left, .navbar-right {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .navbar-search input {
-    width: 100%;
-  }
-
-  .navbar-controls {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .navbar-stats {
-    width: 100%;
-    justify-content: space-around;
-  }
+.navbar-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .navbar-left, .navbar-right {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .navbar-brand {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #212529;
   margin: 0;
+}
+
+/* Mobile-specific styles */
+.mobile-menu-toggle {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.desktop-controls {
+  display: none;
+}
+
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 0 0.5rem;
+  border-top: 1px solid #e9ecef;
+  margin-top: 0.75rem;
+}
+
+.mobile-menu .navbar-search input {
+  width: 100%;
+}
+
+.mobile-menu .navbar-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: stretch;
+}
+
+.mobile-menu .control-button {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.mobile-menu .control-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mobile-menu .sort-direction-button {
+  flex-shrink: 0;
 }
 
 .navbar-search input {
@@ -72,10 +104,10 @@
   gap: 0.5rem;
 }
 
-.global-control-button {
+.global-control-button, .settings-button {
   background: transparent;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   color: #6c757d;
   cursor: pointer;
   padding: 0.5rem;
@@ -86,7 +118,7 @@
   transition: background-color 0.2s, color 0.2s;
 }
 
-.global-control-button:hover {
+.global-control-button:hover, .settings-button:hover {
   background-color: #f8f9fa;
   color: #212529;
 }
@@ -95,6 +127,12 @@
   display: flex;
   gap: 1rem;
   align-items: center;
+}
+
+.control-button {
+    display: flex;
+    gap: .2rem;
+    align-items: center;
 }
 
 .control-group {
@@ -113,19 +151,13 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
-}
-
-.sort-direction-button:hover {
-  background-color: #f8f9fa;
-  border-color: #adb5bd;
 }
 
 .navbar-stats {
-  display: flex;
+  display: none; /* Hidden on smallest screens */
   align-items: center;
   gap: 1rem;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #495057;
   font-weight: 500;
 }
@@ -134,8 +166,6 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  min-width: 5em;
-  justify-content: space-between;
 }
 
 .navbar-stats .stat-active {
@@ -144,38 +174,51 @@
   border-radius: 20px;
   border: 1px solid #ced4da;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-size: 0.8rem;
 }
 
-.navbar-stats .stat-active:hover {
-  background-color: #f8f9fa;
-  border-color: #adb5bd;
+/* Tablet and larger */
+@media (min-width: 576px) {
+  .navbar-stats {
+    display: flex;
+  }
 }
 
-.navbar-stats .stat-active.active {
-  background-color: #e7f5ff;
-  color: #0d6efd;
-  border-color: #0d6efd;
-}
+/* Desktop */
+@media (min-width: 992px) {
+  .navbar {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+  }
 
-.settings-button {
-  background: transparent;
-  border: none;
-  font-size: 1.2rem;
-  color: #6c757d;
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.settings-button:hover {
-  background-color: #f8f9fa;
-  color: #212529;
+  .navbar-main {
+    flex-direction: row;
+    width: auto;
+    border-top: none;
+    margin-top: 0;
+  }
+  .navbar-left {
+    gap: 1.5rem;
+  }
+  .navbar-brand {
+    font-size: 1.5rem;
+  }
+  .mobile-menu-toggle {
+    display: none;
+  }
+  .desktop-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .navbar-controls {
+    flex-direction: row;
+  }
+  .mobile-menu {
+    display: none;
+  }
+  .navbar-stats {
+    font-size: 0.9rem;
+  }
 }

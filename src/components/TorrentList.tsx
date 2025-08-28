@@ -44,13 +44,25 @@ const TorrentList: React.FC<TorrentListProps> = ({
         {rowVirtualizer.getVirtualItems().map((virtualItem) => {
           const torrent = torrents[virtualItem.index];
           return (
+            <div
+              key={virtualItem.key}
+              ref={rowVirtualizer.measureElement}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                transform: `translateY(${virtualItem.start}px)`,
+              }}
+            >
               <TorrentItem
                 torrent={torrent}
                 isSelected={selectedTorrents.has(torrent.id)}
                 onTorrentClick={onTorrentClick}
               />
+            </div>
           );
-        })} 
+        })}
       {!torrents.length &&  <div className="empty"> No Torrents available. </div>}
     </div>
   );

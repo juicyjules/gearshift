@@ -313,7 +313,6 @@ function Main() {
             error={error}
             selectedTorrents={selectedTorrents}
             onTorrentClick={handleTorrentClick}
-            parentRef={parentRef}
           />
         </div>
         <FloatingToolbar

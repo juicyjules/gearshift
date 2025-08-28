@@ -1,5 +1,5 @@
 import React from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useWindowVirtualizer } from '@tanstack/react-virtual';
 import { motion, AnimatePresence } from 'framer-motion';
 import TorrentItem from './TorrentItem';
 import './TorrentList.css';
@@ -11,7 +11,6 @@ interface TorrentListProps {
   error: string | null;
   selectedTorrents: Set<number>;
   onTorrentClick: (id: number, isCtrlPressed: boolean, isShiftPressed: boolean) => void;
-  parentRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const TorrentList: React.FC<TorrentListProps> = ({
@@ -20,11 +19,9 @@ const TorrentList: React.FC<TorrentListProps> = ({
   error,
   selectedTorrents,
   onTorrentClick,
-  parentRef,
 }) => {
-  const rowVirtualizer = useVirtualizer({
-    count: 10000,
-    getScrollElement: () => parentRef.current,
+  const rowVirtualizer = useWindowVirtualizer({
+    count: torrents.length,
     estimateSize: () => 96, // 80px for item + 16px for margin-bottom
     overscan: 5,
   });
@@ -59,11 +56,10 @@ const TorrentList: React.FC<TorrentListProps> = ({
         position: 'relative',
       }}
     >
-
+      <AnimatePresence>
         {rowVirtualizer.getVirtualItems().map((virtualItem) => {
           const torrent = torrents[virtualItem.index];
           return (
-            <AnimatePresence>
             <motion.div
               key={torrent.id}
               variants={torrentVariants}
@@ -79,9 +75,10 @@ const TorrentList: React.FC<TorrentListProps> = ({
                 onTorrentClick={onTorrentClick}
               />
             </motion.div>
-          </AnimatePresence>  
           );
         })} 
+        </AnimatePresence>  
+
       {!torrents.length &&  <div className="empty"> No Torrents available. </div>}
     </div>
   );

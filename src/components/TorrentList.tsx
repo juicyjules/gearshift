@@ -25,7 +25,6 @@ const TorrentList: React.FC<TorrentListProps> = ({
     estimateSize: () => 96, // 80px for item + 16px for margin-bottom
     overscan: 5,
   });
-
   if (isLoading) {
     return <div>Loading torrents...</div>;
   }
@@ -46,7 +45,6 @@ const TorrentList: React.FC<TorrentListProps> = ({
         duration: 0.2,
       },},
   };
-
   return (
     <div
       className="torrent-list"
@@ -56,18 +54,19 @@ const TorrentList: React.FC<TorrentListProps> = ({
         position: 'relative',
       }}
     >
+      <AnimatePresence>
+
         {rowVirtualizer.getVirtualItems().map((virtualItem) => {
           const torrent = torrents[virtualItem.index];
           return (
-      <AnimatePresence>
 
             <motion.div
               key={torrent.id}
               variants={torrentVariants}
-              initial="hidden"
-              animate="visible"
+              initial={rowVirtualizer.isScrolling ? false : "hidden"}
+              animate={rowVirtualizer.isScrolling ? false : "visible"}
               layout={rowVirtualizer.isScrolling ? false : true}
-              exit="exit"
+              exit={rowVirtualizer.isScrolling ? undefined : "exit"}
               transition={{ duration: 0.2 }}
             >
               <TorrentItem
@@ -76,10 +75,9 @@ const TorrentList: React.FC<TorrentListProps> = ({
                 onTorrentClick={onTorrentClick}
               />
             </motion.div>
-        </AnimatePresence>  
-
           );
         })} 
+        </AnimatePresence>  
 
       {!torrents.length &&  <div className="empty"> No Torrents available. </div>}
     </div>

@@ -36,13 +36,14 @@ const TorrentList: React.FC<TorrentListProps> = ({
 
 
   const torrentVariants = {
-    hidden: { opacity: 0, translateX:-100},
-    visible: { opacity: 1,translateX:0, transition: {
+    hidden: { opacity: 0, scale:0.4},
+    visible: { opacity: 1,scale:1, transition: {
         duration: 0.2,
+        type: "spring"
       },
 },
-    exit: { opacity: 0, translateX:100, transition: {
-        duration: 0.2,
+    exit: {opacity: 0,transition: {
+        duration: 0.3,
       },},
   };
   return (
@@ -68,6 +69,7 @@ const TorrentList: React.FC<TorrentListProps> = ({
               layout={rowVirtualizer.isScrolling ? false : true}
               exit={rowVirtualizer.isScrolling ? undefined : "exit"}
               transition={{ duration: 0.2 }}
+              
             >
               <TorrentItem
                 torrent={torrent}

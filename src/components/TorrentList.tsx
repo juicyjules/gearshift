@@ -1,6 +1,6 @@
 import React from 'react';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { motion, AnimatePresence, spring } from 'framer-motion';
+import { motion, spring } from 'framer-motion';
 import TorrentItem from './TorrentItem';
 import './TorrentList.css';
 import { type TorrentOverview } from '../entities/TorrentOverview';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { motion, spring } from 'framer-motion';
+import {  spring } from 'framer-motion';
 import TorrentItem from './TorrentItem';
 import './TorrentList.css';
 import { type TorrentOverview } from '../entities/TorrentOverview';
@@ -33,19 +33,6 @@ const TorrentList: React.FC<TorrentListProps> = ({
     return <div style={{ color: 'red' }}>Error: {error}</div>;
   }
 
-
-
-  const torrentVariants = {
-    hidden: { opacity: 0, scale:0.4},
-    visible: { opacity: 1,scale:1, transition: {
-        duration: 0.2,
-        type: spring
-      },
-},
-    exit: {opacity: 0,transition: {
-        duration: 0.3,
-      },},
-  };
   return (
     <div
       className="torrent-list"
@@ -58,22 +45,11 @@ const TorrentList: React.FC<TorrentListProps> = ({
         {rowVirtualizer.getVirtualItems().map((virtualItem) => {
           const torrent = torrents[virtualItem.index];
           return (
-            <motion.div
-              key={torrent.id}
-              variants={torrentVariants}
-              initial={rowVirtualizer.isScrolling ? false : "hidden"}
-              animate={rowVirtualizer.isScrolling ? false : "visible"}
-              layout={rowVirtualizer.isScrolling ? false : true}
-              exit={rowVirtualizer.isScrolling ? undefined : "exit"}
-              transition={{ duration: 0.2 }}
-              
-            >
               <TorrentItem
                 torrent={torrent}
                 isSelected={selectedTorrents.has(torrent.id)}
                 onTorrentClick={onTorrentClick}
               />
-            </motion.div>
           );
         })} 
       {!torrents.length &&  <div className="empty"> No Torrents available. </div>}

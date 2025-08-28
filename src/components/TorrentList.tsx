@@ -59,10 +59,11 @@ const TorrentList: React.FC<TorrentListProps> = ({
         position: 'relative',
       }}
     >
-      <AnimatePresence>
+
         {rowVirtualizer.getVirtualItems().map((virtualItem) => {
           const torrent = torrents[virtualItem.index];
           return (
+            <AnimatePresence>
             <motion.div
               key={torrent.id}
               variants={torrentVariants}
@@ -78,9 +79,9 @@ const TorrentList: React.FC<TorrentListProps> = ({
                 onTorrentClick={onTorrentClick}
               />
             </motion.div>
+          </AnimatePresence>  
           );
         })} 
-      </AnimatePresence>  
       {!torrents.length &&  <div className="empty"> No Torrents available. </div>}
     </div>
   );

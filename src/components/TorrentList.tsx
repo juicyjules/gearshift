@@ -1,6 +1,6 @@
 import React from 'react';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, spring } from 'framer-motion';
 import TorrentItem from './TorrentItem';
 import './TorrentList.css';
 import { type TorrentOverview } from '../entities/TorrentOverview';
@@ -39,7 +39,7 @@ const TorrentList: React.FC<TorrentListProps> = ({
     hidden: { opacity: 0, scale:0.4},
     visible: { opacity: 1,scale:1, transition: {
         duration: 0.2,
-        type: "spring"
+        type: spring
       },
 },
     exit: {opacity: 0,transition: {

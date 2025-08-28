@@ -66,7 +66,7 @@ const TorrentList: React.FC<TorrentListProps> = ({
               variants={torrentVariants}
               initial="hidden"
               animate="visible"
-              layout
+              layout={rowVirtualizer.isScrolling ? false : true}
               exit="exit"
               transition={{ duration: 0.2 }}
             >

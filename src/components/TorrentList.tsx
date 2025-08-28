@@ -46,7 +46,6 @@ const TorrentList: React.FC<TorrentListProps> = ({
           return (
             <div
               key={virtualItem.key}
-              ref={rowVirtualizer.measureElement}
               style={{
                 position: 'absolute',
                 top: 0,
@@ -59,6 +58,7 @@ const TorrentList: React.FC<TorrentListProps> = ({
                 torrent={torrent}
                 isSelected={selectedTorrents.has(torrent.id)}
                 onTorrentClick={onTorrentClick}
+                measure={rowVirtualizer.measureElement}
               />
             </div>
           );

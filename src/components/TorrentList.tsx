@@ -23,7 +23,7 @@ const TorrentList: React.FC<TorrentListProps> = ({
   parentRef,
 }) => {
   const rowVirtualizer = useVirtualizer({
-    count: torrents.length,
+    count: 10000,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 96, // 80px for item + 16px for margin-bottom
     overscan: 5,

@@ -9,26 +9,16 @@ import TorrentDetailView from './TorrentDetailView';
 import RatioCircle from './RatioCircle';
 import { formatBytes, formatEta, getTorrentStatusText } from '../utils/formatting';
 
-import { useEffect, useRef } from 'react';
-
 interface TorrentItemProps {
   torrent: TorrentOverview;
   isSelected: boolean;
   onTorrentClick: (id: number, isCtrlPressed: boolean, isShiftPressed: boolean) => void;
-  measure: (element: HTMLElement | null) => void;
 }
 
-const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorrentClick, measure }) => {
+const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorrentClick }) => {
   const { transmission } = useTransmission();
   const [isOpen, setIsOpen] = useState(false);
   const [details, setDetails] = useState<TorrentDetails | null>(null);
-  const elementRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (elementRef.current) {
-      measure(elementRef.current);
-    }
-  }, [isOpen, details, measure]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -100,7 +90,7 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorren
   };
 
   return (
-    <div ref={elementRef} className={`torrent-item-container ${isSelected ? 'selected' : ''}`}>
+    <div className={`torrent-item-container ${isSelected ? 'selected' : ''}`}>
       <div
         className={`torrent-item status-${statusText.toLowerCase().replace(' ', '-')}`}
         onClick={handleItemClick}

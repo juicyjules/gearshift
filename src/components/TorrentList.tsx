@@ -24,6 +24,9 @@ const TorrentList: React.FC<TorrentListProps> = ({
     estimateSize: () => 96, // 80px for item + 16px for margin-bottom
     overscan: 5,
   });
+
+  const items = rowVirtualizer.getVirtualItems();
+
   if (isLoading) {
     return <div>Loading torrents...</div>;
   }
@@ -41,29 +44,35 @@ const TorrentList: React.FC<TorrentListProps> = ({
         position: 'relative',
       }}
     >
-        {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-          const torrent = torrents[virtualItem.index];
-          return (
-            <div
-              key={virtualItem.key}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                transform: `translateY(${virtualItem.start}px)`,
-              }}
-            >
-              <TorrentItem
-                torrent={torrent}
-                isSelected={selectedTorrents.has(torrent.id)}
-                onTorrentClick={onTorrentClick}
-                measure={rowVirtualizer.measureElement}
-              />
-            </div>
-          );
-        })}
-      {!torrents.length &&  <div className="empty"> No Torrents available. </div>}
+      {items.length > 0 && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            transform: `translateY(${items[0]?.start ?? 0}px)`,
+          }}
+        >
+          {items.map((virtualItem) => {
+            const torrent = torrents[virtualItem.index];
+            return (
+              <div
+                key={virtualItem.key}
+                ref={rowVirtualizer.measureElement}
+                data-index={virtualItem.index}
+              >
+                <TorrentItem
+                  torrent={torrent}
+                  isSelected={selectedTorrents.has(torrent.id)}
+                  onTorrentClick={onTorrentClick}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {!torrents.length && !isLoading && <div className="empty"> No Torrents available. </div>}
     </div>
   );
 };

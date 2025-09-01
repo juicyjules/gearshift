@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FaPause, FaPlay } from 'react-icons/fa';
 import { TorrentStatus } from '../transmission-rpc/types';
 import './TorrentItem.css';
@@ -38,12 +38,8 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorren
   const progressPercent = (percentDone * 100).toFixed(2);
   const statusText = getTorrentStatusText(status);
 
-  useEffect(() => {
-    fetchDetails()
-  },[torrent])
-  
-  const fetchDetails = async () => {
-     if (!details && !isLoading) {
+  const fetchDetails = useCallback(async () => {
+    if (!details && !isLoading) {
       setIsLoading(true);
       setError(null);
       try {
@@ -61,11 +57,16 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorren
         setIsLoading(false);
       }
     }
-  }
+  }, [details, isLoading, transmission, torrent.id]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchDetails();
+    }
+  }, [isOpen, fetchDetails, torrent.id]);
 
   const handleToggle = async () => {
     setIsOpen(!isOpen);
-    fetchDetails();
   };
 
   const handleItemClick = (e: React.MouseEvent) => {

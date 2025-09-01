@@ -305,6 +305,7 @@ function Main() {
           style={{
             height: `calc(100vh - 80px)`,
             padding: '0 1.5rem',
+            marginTop: '80px',
           }}
         >
          <TorrentList

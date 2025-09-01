@@ -1,5 +1,6 @@
 import React from 'react';
 import { useWindowVirtualizer } from '@tanstack/react-virtual';
+import { motion } from 'framer-motion';
 import TorrentItem from './TorrentItem';
 import './TorrentList.css';
 import { type TorrentOverview } from '../entities/TorrentOverview';
@@ -44,34 +45,37 @@ const TorrentList: React.FC<TorrentListProps> = ({
         position: 'relative',
       }}
     >
-      {items.length > 0 && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            transform: `translateY(${items[0]?.start ?? 0}px)`,
-          }}
-        >
-          {items.map((virtualItem) => {
-            const torrent = torrents[virtualItem.index];
-            return (
-              <div
-                key={virtualItem.key}
-                ref={rowVirtualizer.measureElement}
-                data-index={virtualItem.index}
-              >
-                <TorrentItem
-                  torrent={torrent}
-                  isSelected={selectedTorrents.has(torrent.id)}
-                  onTorrentClick={onTorrentClick}
-                />
-              </div>
-            );
-          })}
-        </div>
-      )}
+      {items.map((virtualItem) => {
+        const torrent = torrents[virtualItem.index];
+        if (!torrent) return null;
+
+        return (
+          <motion.div
+            key={torrent.id}
+            layout="position"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: `${virtualItem.size}px`,
+              transform: `translateY(${virtualItem.start}px)`,
+            }}
+            ref={rowVirtualizer.measureElement}
+            data-index={virtualItem.index}
+          >
+            <TorrentItem
+              torrent={torrent}
+              isSelected={selectedTorrents.has(torrent.id)}
+              onTorrentClick={onTorrentClick}
+            />
+          </motion.div>
+        );
+      })}
       {!torrents.length && !isLoading && <div className="empty"> No Torrents available. </div>}
     </div>
   );

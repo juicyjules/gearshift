@@ -12,7 +12,7 @@ import { useTorrentSelection } from '../hooks/useTorrentSelection';
 import { useTransmission } from '../contexts/TransmissionContext';
 import { type TorrentOverview, TorrentOverviewFields } from '../entities/TorrentOverview';
 import Fuse from 'fuse.js';
-
+import './Main.css'
 import { TorrentStatus } from '../transmission-rpc/types';
 
 export type SortDirection = 'asc' | 'desc';
@@ -307,6 +307,7 @@ function Main() {
             padding: '0 1.5rem',
           }}
         >
+         <div className='placeholder'></div>
          <TorrentList
             torrents={processedTorrents}
             isLoading={isLoading}

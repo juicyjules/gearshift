@@ -38,10 +38,12 @@ export const useConnection = () => {
   const [settings, setSettings] = useState<ConnectionSettings | null>(null);
   const [transmission, setTransmission] = useState<TransmissionClient | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const connect = useCallback(async (connectionSettings: ConnectionSettings) => {
     setError(null);
+    setIsConnecting(true);
     try {
       const url = parseUrl(connectionSettings.host)
       if (url) {
@@ -68,7 +70,15 @@ export const useConnection = () => {
       console.error('Connection failed:', e);
       setError('Failed to connect to Transmission. Please check your settings.');
       setIsConnected(false);
+    } finally {
+      setIsConnecting(false);
     }
+  }, []);
+
+  const disconnect = useCallback(() => {
+    setIsConnected(false);
+    setTransmission(null);
+    // Keep settings so the user can see them in the connection modal
   }, []);
 
   useEffect(() => {
@@ -80,8 +90,9 @@ export const useConnection = () => {
       connect(settingsToTry);
     } else {
       setSettings({ host: '', port: 9091, username: '', password: '' });
+      setIsConnecting(false);
     }
   }, [connect]);
 
-  return { settings, transmission, isConnected, error, connect };
+  return { settings, transmission, isConnected, isConnecting, error, connect, disconnect };
 };

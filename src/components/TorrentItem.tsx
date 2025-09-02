@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { FaPause, FaPlay } from 'react-icons/fa';
 import { TorrentStatus } from '../transmission-rpc/types';
 import './TorrentItem.css';
@@ -38,12 +38,8 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorren
   const progressPercent = (percentDone * 100).toFixed(2);
   const statusText = getTorrentStatusText(status);
 
-  useEffect(() => {
-    fetchDetails()
-  },[torrent])
-  
-  const fetchDetails = async () => {
-     if (!details && !isLoading) {
+  const fetchDetails = useCallback(async () => {
+    if (!details && !isLoading) {
       setIsLoading(true);
       setError(null);
       try {
@@ -61,7 +57,13 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorren
         setIsLoading(false);
       }
     }
-  }
+  }, [details, isLoading, transmission, torrent.id]);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchDetails();
+    }
+  }, [isOpen, fetchDetails]);
 
   const handleToggle = async () => {
     setIsOpen(!isOpen);
@@ -100,7 +102,7 @@ const TorrentItem: React.FC<TorrentItemProps> = ({ torrent, isSelected, onTorren
   return (
     <div className={`torrent-item-container ${isSelected ? 'selected' : ''}`}>
       <div
-        className={`torrent-item status-${statusText.toLowerCase().replace(' ', '-')}`}
+        className={`torrent-item status-${statusText.toLowerCase().replace(' ', '-')} ${percentDone === 1 ? 'done' : ''}`}
         onClick={handleItemClick}
         onDoubleClick={handleDoubleClick}
       >

@@ -1,6 +1,6 @@
 :root {
   --progress-bg: #e9ecef;
-  --progress-bar-downloading: #198754;
+  --progress-bar-incomplete: #0d6efd;
   --progress-bar-seeding: #198754;
   --progress-bar-stopped: #6c757d;
   --border-color: #dee2e6;
@@ -39,7 +39,7 @@
 }
 
 .control-button.running {
-  color: var(--error-color);
+  color: var(--text-color);
 }
 
 .control-button.paused {
@@ -106,12 +106,13 @@
 
 .progress-bar-inner {
   height: 100%;
-  background-color: var(--progress-bar-downloading);
+  background-color: var(--progress-bar-incomplete);
   transition: width 0.3s ease-in-out;
 }
 
 /* Color progress bar based on status */
-.torrent-item.status-seeding .progress-bar-inner {
+.torrent-item.status-seeding .progress-bar-inner,
+.torrent-item.status-downloading.done .progress-bar-inner {
   background-color: var(--progress-bar-seeding);
 }
 .torrent-item.status-stopped .progress-bar-inner {

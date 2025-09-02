@@ -6,6 +6,7 @@ interface TransmissionContextType {
   transmission: TransmissionClient | null;
   settings: ConnectionSettings | null;
   connect: (settings: ConnectionSettings) => Promise<void>;
+  disconnect: () => void;
   error: string | null;
 }
 

@@ -9,7 +9,11 @@ interface TransmissionProviderProps {
 }
 
 export const TransmissionProvider: React.FC<TransmissionProviderProps> = ({ children }) => {
-  const { settings, transmission, isConnected, error, connect } = useConnection();
+  const { settings, transmission, isConnected, isConnecting, error, connect, disconnect } = useConnection();
+
+  if (isConnecting) {
+    return <div>Loading...</div>;
+  }
 
   if (!isConnected || !transmission) {
     return (
@@ -30,6 +34,7 @@ export const TransmissionProvider: React.FC<TransmissionProviderProps> = ({ chil
     transmission,
     settings,
     connect,
+    disconnect,
     error,
   };
 

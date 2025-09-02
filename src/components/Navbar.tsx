@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog, FaPlayCircle, FaPauseCircle } from 'react-icons/fa';
+import { FaArrowDown, FaArrowUp, FaSortAmountDown, FaSortAmountUp, FaFilter, FaSort, FaCog, FaPlayCircle, FaPauseCircle, FaSpinner } from 'react-icons/fa';
 import './Navbar.css';
 import CustomDropdown from './CustomDropdown';
 import { useTransmission } from '../contexts/TransmissionContext';
@@ -42,7 +42,6 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const initialFetchDone = useRef(false);
 
   useEffect(() => {
     if (!transmission) return;
@@ -51,18 +50,16 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
       try {
         const response = await transmission.stats();
         setStats(response);
+        setError(null);
+        setIsLoading(false);
       } catch {
-        setError('Failed to fetch session stats');
-      } finally {
-        if (!initialFetchDone.current) {
-          setIsLoading(false);
-          initialFetchDone.current = true;
-        }
+        setError('Connection lost. Refetching...');
+        setIsLoading(true);
       }
     };
 
     fetchStats();
-    const intervalId = setInterval(fetchStats, 750);
+    const intervalId = setInterval(fetchStats, 1500);
     return () => clearInterval(intervalId);
   }, [transmission]);
 
@@ -142,9 +139,13 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
             {renderFilterControls()}
           </div>
           <div className="navbar-stats">
-            {isLoading && <span>Loading...</span>}
-            {error && <span className="error-message">{error}</span>}
-            {stats && (
+            {isLoading && (
+              <span className="stat-item loading">
+                <FaSpinner className="spin" />
+              </span>
+            )}
+            {!isLoading && error && <span className="error-message">{error}</span>}
+            {!isLoading && stats && (
               <>
                 <span className="stat-item"><FaArrowDown /> {formatBytes(stats.downloadSpeed)}/s</span>
                 <span className="stat-item"><FaArrowUp /> {formatBytes(stats.uploadSpeed)}/s</span>

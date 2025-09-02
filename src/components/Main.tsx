@@ -118,6 +118,14 @@ function Main() {
           return (a.rateUpload - b.rateUpload) * dir;
         case 'uploadRatio':
           return (a.uploadRatio - b.uploadRatio) * dir;
+        case 'status':
+          return (a.status - b.status) * dir;
+        case 'eta':
+          return (a.eta - b.eta) * dir;
+        case 'peersSendingToUs':
+          return (a.peersSendingToUs - b.peersSendingToUs) * dir;
+        case 'peersGettingFromUs':
+          return (a.peersGettingFromUs - b.peersGettingFromUs) * dir;
         default:
           return 0;
       }

@@ -22,6 +22,7 @@ interface NavbarProps {
   onSettingsClick: () => void;
   areAnyTorrentsActive: boolean;
   onToggleAllClick: () => void;
+  activeTorrentsCount: number;
 }
 
 const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
@@ -36,6 +37,7 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
   onSettingsClick,
   areAnyTorrentsActive,
   onToggleAllClick,
+  activeTorrentsCount,
 }, ref) => {
   const { transmission } = useTransmission();
   const [stats, setStats] = useState<SessionStatsResponse | null>(null);
@@ -153,7 +155,7 @@ const Navbar = React.forwardRef<HTMLInputElement, NavbarProps>(({
                   className={`stat-active ${showOnlyActive ? 'active' : ''}`}
                   onClick={() => onShowOnlyActiveChange(!showOnlyActive)}
                 >
-                  Active: {stats.activeTorrentCount}
+                  Active: {activeTorrentsCount}
                 </button>
               </>
             )}

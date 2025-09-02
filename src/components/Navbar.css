@@ -207,6 +207,13 @@
   border: 1px solid #ced4da;
   cursor: pointer;
   font-size: 0.8rem;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.navbar-stats .stat-active.active {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
 }
 
 /* Tablet and larger */

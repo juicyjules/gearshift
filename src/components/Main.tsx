@@ -126,6 +126,10 @@ function Main() {
     return sortedResult;
   }, [searchTerm, filterStatus, showOnlyActive, sortBy, sortDirection, torrents, fuse]);
 
+  const activeTorrentsCount = useMemo(() => {
+    return torrents.filter(t => t.rateDownload > 0 || t.rateUpload > 0).length;
+  }, [torrents]);
+
   const { selectedTorrents, setSelectedTorrents, handleTorrentClick } = useTorrentSelection(processedTorrents);
 
   const isAllVisibleSelected = useMemo(() => {
@@ -298,6 +302,7 @@ function Main() {
         onSettingsClick={() => setIsSettingsOpen(true)}
         areAnyTorrentsActive={areAnyTorrentsActive}
         onToggleAllClick={handleToggleAllClick}
+        activeTorrentsCount={activeTorrentsCount}
       />
         <div
           ref={parentRef}

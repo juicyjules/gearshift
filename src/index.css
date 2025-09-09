@@ -30,6 +30,20 @@ body {
   --text-color-light: #213547;
   --background-color-dark: #242424;
   --text-color-dark: rgba(255, 255, 255, 0.87);
+  --primary-color: #0d6efd;
+  --primary-color-dark: #0b5ed7;
+  --border-color: #dee2e6;
+  --text-color-secondary: #6c757d;
+  --background-color-secondary: #f8f9fa;
+  --progress-bg: #e9ecef;
+  --progress-bar-incomplete: #0d6efd;
+  --progress-bar-seeding: #198754;
+  --progress-bar-stopped: #6c757d;
+  --text-color: #212529;
+  --subtle-text-color: #6c757d;
+  --error-color: #dc3545;
+  --error-color-dark: #c82333;
+  --text-color-secondary-dark: #5a6268;
 }
 
 

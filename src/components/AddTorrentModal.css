@@ -1,41 +1,10 @@
-.add-torrent-modal .modal-content {
-  min-width: 450px;
-}
-
-.tab-buttons {
-  display: flex;
-  border-bottom: 1px solid #dee2e6;
-  margin-bottom: 1.5rem;
-}
-
-.tab-button {
-  background: none;
-  border: none;
-  padding: 0.75rem 1.25rem;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  color: #6c757d;
-  border-bottom: 3px solid transparent;
-  transition: color 0.2s, border-color 0.2s;
-}
-
-.tab-button:hover {
-  color: #0d6efd;
-}
-
-.tab-button.active {
-  color: #0d6efd;
-  border-bottom-color: #0d6efd;
-}
-
 .tab-content {
   min-height: 150px;
   padding: 0.5rem;
 }
 
 .drop-zone {
-  border: 2px dashed #ccc;
+  border: 2px dashed var(--border-color);
   border-radius: 8px;
   padding: 1.5rem;
   text-align: center;
@@ -44,8 +13,8 @@
 }
 
 .drop-zone:hover {
-  border-color: #0d6efd;
-  background-color: #f8f9fa;
+  border-color: var(--primary-color);
+  background-color: var(--background-color-secondary);
 }
 
 .file-input {
@@ -57,19 +26,19 @@
 }
 
 .btn-primary {
-  background-color: #0d6efd;
+  background-color: var(--primary-color);
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #0b5ed7;
+  background-color: var(--primary-color-dark);
 }
 
 .magnet-textarea {
   width: 100%;
   min-height: 120px;
   padding: 0.75rem;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-family: inherit;
   font-size: 0.95rem;
@@ -86,7 +55,7 @@
   margin-bottom: 1rem;
   max-height: 120px;
   overflow-y: auto;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 0.5rem;
 }
@@ -105,8 +74,8 @@
 }
 
 .staged-item.status-loading {
-  color: #6c757d;
-  background-color: #f8f9fa;
+  color: var(--text-color-secondary);
+  background-color: var(--background-color-secondary);
 }
 
 .staged-item.status-loaded {

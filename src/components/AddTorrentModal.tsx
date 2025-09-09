@@ -183,15 +183,15 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
         </>
       }
     >
-        <div className="tab-buttons">
+        <div className="tabs">
           <button
-            className={`tab-button ${activeTab === 'files' ? 'active' : ''}`}
+            className={`tab ${activeTab === 'files' ? 'active' : ''}`}
             onClick={() => setActiveTab('files')}
           >
             Files
           </button>
           <button
-            className={`tab-button ${activeTab === 'magnets' ? 'active' : ''}`}
+            className={`tab ${activeTab === 'magnets' ? 'active' : ''}`}
             onClick={() => setActiveTab('magnets')}
           >
             Magnet Links

@@ -7,9 +7,10 @@ interface ModalProps {
   onClose: () => void;
   children: ReactNode;
   footer?: ReactNode;
+  className?: string;
 }
 
-const Modal: React.FC<ModalProps> = ({ title, onClose, children, footer }) => {
+const Modal: React.FC<ModalProps> = ({ title, onClose, children, footer, className }) => {
   const modalVariants = {
     hidden: { opacity: 0, scale: 0.95 },
     visible: { opacity: 1, scale: 1 },
@@ -25,7 +26,7 @@ const Modal: React.FC<ModalProps> = ({ title, onClose, children, footer }) => {
       exit={{ opacity: 0 }}
     >
       <motion.div
-        className="modal-content"
+        className={`modal-content ${className || ''}`}
         onClick={(e) => e.stopPropagation()}
         variants={modalVariants}
         initial="hidden"

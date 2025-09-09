@@ -100,6 +100,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     <Modal
       title="Settings"
       onClose={onClose}
+      className="settings-modal-content"
       footer={
         <>
           <motion.button className="cancel-button" onClick={onClose} whileTap={{ scale: 0.95 }}>Cancel</motion.button>

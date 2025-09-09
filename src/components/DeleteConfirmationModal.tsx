@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaTrash } from 'react-icons/fa';
+import Modal from './Modal';
 import './DeleteConfirmationModal.css';
 
 interface DeleteConfirmationModalProps {
@@ -16,22 +17,10 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   const [deleteData, setDeleteData] = useState(false);
 
   return (
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <h2>Confirm Deletion</h2>
-        <p>
-          Are you sure you want to delete {torrentCount} torrent(s)?
-        </p>
-        <div className="delete-options">
-          <label>
-            <input
-              type="checkbox"
-              checked={deleteData}
-              onChange={(e) => setDeleteData(e.target.checked)}
-            />
-            Delete local data
-          </label>
-        </div>
+    <Modal
+      title="Confirm Deletion"
+      onClose={onCancel}
+      footer={
         <div className="modal-actions">
           <button onClick={onCancel} className="btn btn-secondary">
             Cancel
@@ -44,8 +33,22 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
             <span>Delete</span>
           </button>
         </div>
+      }
+    >
+      <p>
+        Are you sure you want to delete {torrentCount} torrent(s)?
+      </p>
+      <div className="delete-options">
+        <label>
+          <input
+            type="checkbox"
+            checked={deleteData}
+            onChange={(e) => setDeleteData(e.target.checked)}
+          />
+          Delete local data
+        </label>
       </div>
-    </div>
+    </Modal>
   );
 };
 

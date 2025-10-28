@@ -1,0 +1,16 @@
+{
+  "name": "@jsr/brielov__transmission-rpc",
+  "version": "1.0.0",
+  "homepage": "https://jsr.io/@brielov/transmission-rpc",
+  "type": "module",
+  "dependencies": {
+    "camelcase-keys": "^9.1.3"
+  },
+  "exports": {
+    ".": {
+      "types": "./_dist/mod.d.ts",
+      "default": "./mod.js"
+    }
+  },
+  "_jsr_revision": 11
+}

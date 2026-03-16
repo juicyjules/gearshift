@@ -18,7 +18,7 @@ import { TorrentStatus } from '../transmission-rpc/types';
 export type SortDirection = 'asc' | 'desc';
 
 function Main() {
-  const { transmission, disconnect } = useTransmission();
+  const { transmission } = useTransmission();
   const [torrents, setTorrents] = useState<TorrentOverview[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<TorrentStatus | 'all'>('all');
@@ -32,7 +32,6 @@ function Main() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const fetchFailureCount = useRef(0);
   const [initialFiles, setInitialFiles] = useState<File[]>([]);
   const [initialMagnets, setInitialMagnets] = useState('');
 
@@ -167,7 +166,6 @@ function Main() {
         const response = await transmission.torrents({ fields: TorrentOverviewFields });
         if (response.torrents) {
           setTorrents(response.torrents as TorrentOverview[]);
-          fetchFailureCount.current = 0;
           // If a fetch succeeds, clear any previous error state.
           if (error) {
             setError(null);
@@ -175,12 +173,6 @@ function Main() {
         }
       } catch (err: unknown) {
         console.error('Fetch error:', err); // Keep logging for debugging.
-        fetchFailureCount.current += 1;
-
-        if (fetchFailureCount.current >= 3) {
-            disconnect();
-            return
-        }
 
         if (torrents.length === 0) {
           // If the initial fetch fails, show the main error screen.
@@ -205,7 +197,7 @@ function Main() {
     const intervalId = setInterval(fetchTorrents, 1500);
 
     return () => clearInterval(intervalId);
-  }, [transmission, torrents.length, error, isLoading, disconnect]);
+  }, [transmission, torrents.length, error, isLoading]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

@@ -188,7 +188,7 @@ export class TransmissionClient {
     const { username, password } = this;
     if (username || password) {
       // Only generate the header if either username or password is non-empty
-      const encoded = this.toBase64(`${username}:${password}`);
+      const encoded = this.toBase64(`${username ?? ""}:${password ?? ""}`);
       return `Basic ${encoded}`;
     }
     return undefined;

@@ -19,11 +19,13 @@
 .form-group input[type="password"],
 .form-group input[type="number"] {
   padding: 0.6rem 0.8rem;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   font-size: 0.9rem;
   width: 100%;
   box-sizing: border-box;
+  background-color: var(--background-color-light);
+  color: var(--text-color-light);
 }
 
 .form-group input[type="checkbox"] {

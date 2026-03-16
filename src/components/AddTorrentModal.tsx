@@ -37,7 +37,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
     if (!transmission) return;
     const { metainfo = [], magnets = [] } = torrents;
 
-    for (const meta of metainfo) {
+    const stageFile = async (meta: string) => {
       const tempId = Date.now() + Math.random();
       setStagedTorrents(prev => [...prev, { id: tempId, name: 'Loading file...', hashString: tempId.toString(), status: 'loading' }]);
       try {
@@ -48,9 +48,9 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
         console.error("Failed to stage torrent:", error);
         setStagedTorrents(prev => prev.map(t => t.id === tempId ? { ...t, name: 'Failed to load file', status: 'error' } : t));
       }
-    }
+    };
 
-    for (const magnet of magnets) {
+    const stageMagnet = async (magnet: string) => {
       const tempId = Date.now() + Math.random();
       setStagedTorrents(prev => [...prev, { id: tempId, name: 'Loading magnet...', hashString: tempId.toString(), status: 'loading' }]);
       try {
@@ -61,7 +61,12 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
         console.error("Failed to stage torrent:", error);
         setStagedTorrents(prev => prev.map(t => t.id === tempId ? { ...t, name: 'Failed to load magnet', status: 'error' } : t));
       }
-    }
+    };
+
+    await Promise.all([
+      ...metainfo.map(stageFile),
+      ...magnets.map(stageMagnet),
+    ]);
   }, [transmission]);
 
   const readAndStageFiles = useCallback((files: File[]) => {

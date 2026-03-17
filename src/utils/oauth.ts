@@ -1,4 +1,5 @@
 // A simple, custom OAuth2 implementation for Authorization Code with PKCE.
+import { getConfig } from '../config';
 
 const OAUTH_STATE_KEY = 'oauth_state';
 const OAUTH_VERIFIER_KEY = 'oauth_code_verifier';
@@ -34,8 +35,13 @@ export async function initiateLogin() {
   sessionStorage.setItem(OAUTH_STATE_KEY, state);
   sessionStorage.setItem(OAUTH_VERIFIER_KEY, codeVerifier);
 
-  const clientId = import.meta.env.VITE_OAUTH_CLIENT_ID;
-  const authority = import.meta.env.VITE_OAUTH_AUTHORITY; // Expected to be the base URL or well-known
+  const configObj = getConfig();
+  const clientId = configObj.OAUTH_CLIENT_ID;
+  const authority = configObj.OAUTH_AUTHORITY; // Expected to be the base URL or well-known
+  if (!clientId || !authority) {
+    console.error("Missing OAUTH_CLIENT_ID or OAUTH_AUTHORITY in config");
+    return;
+  }
   // For Kanidm, the authorize endpoint is usually /oauth2/authorize or similar.
   // Wait, if it's standard OIDC we should perhaps fetch the discovery endpoint.
   // For simplicity, let's assume AUTHORITY includes the base, and we append /authorize.
@@ -56,8 +62,8 @@ export async function initiateLogin() {
 
     const authEndpoint = config.authorization_endpoint;
 
-    const redirectUri = import.meta.env.VITE_OAUTH_REDIRECT_URI || window.location.origin;
-    const scope = import.meta.env.VITE_OAUTH_SCOPE || 'openid profile email';
+    const redirectUri = configObj.OAUTH_REDIRECT_URI || window.location.origin;
+    const scope = configObj.OAUTH_SCOPE || 'openid profile email';
 
     const params = new URLSearchParams({
       response_type: 'code',
@@ -74,8 +80,8 @@ export async function initiateLogin() {
     console.error("Failed to fetch OIDC discovery document:", error);
     // Fallback if discovery fails
     const fallbackAuthEndpoint = `${authority.replace(/\/$/, '')}/authorize`;
-    const redirectUri = import.meta.env.VITE_OAUTH_REDIRECT_URI || window.location.origin;
-    const scope = import.meta.env.VITE_OAUTH_SCOPE || 'openid profile email';
+    const redirectUri = configObj.OAUTH_REDIRECT_URI || window.location.origin;
+    const scope = configObj.OAUTH_SCOPE || 'openid profile email';
 
     const params = new URLSearchParams({
       response_type: 'code',
@@ -103,9 +109,13 @@ export async function handleCallback(code: string, state: string) {
     throw new Error('No code verifier found');
   }
 
-  const clientId = import.meta.env.VITE_OAUTH_CLIENT_ID;
-  const authority = import.meta.env.VITE_OAUTH_AUTHORITY;
-  const redirectUri = import.meta.env.VITE_OAUTH_REDIRECT_URI || window.location.origin;
+  const configObj = getConfig();
+  const clientId = configObj.OAUTH_CLIENT_ID;
+  const authority = configObj.OAUTH_AUTHORITY;
+  if (!clientId || !authority) {
+    throw new Error('Missing OAUTH_CLIENT_ID or OAUTH_AUTHORITY in config');
+  }
+  const redirectUri = configObj.OAUTH_REDIRECT_URI || window.location.origin;
 
   let tokenEndpoint = `${authority.replace(/\/$/, '')}/token`;
   try {

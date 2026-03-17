@@ -116,9 +116,13 @@ export class TransmissionClient {
     } else {
       // Handle configuration object
       const protocol = config.ssl ? "https" : "http";
+      let authPart = "";
+      if (config.username !== undefined || config.password !== undefined) {
+        authPart = `${encodeURIComponent(config.username ?? "")}:${encodeURIComponent(config.password ?? "")}@`;
+      }
       url = new URL(
         `/transmission/rpc`,
-        `${protocol}://${config.host}:${config.port}`,
+        `${protocol}://${authPart}${config.host}:${config.port}`,
       );
       timeoutMs = config.timeoutMs ?? 10_000;
     }

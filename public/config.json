@@ -1,0 +1,7 @@
+{
+  "OAUTH_CLIENT_ID": "gearshift",
+  "OAUTH_AUTHORITY": "https://idm.example.com/oauth2/openid/gearshift",
+  "OAUTH_REDIRECT_URI": "http://localhost:5173/callback",
+  "OAUTH_SCOPE": "openid profile email",
+  "TRANSMISSION_RPC_URL": ""
+}

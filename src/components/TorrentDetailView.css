@@ -1,6 +1,6 @@
 .torrent-detail-view {
   padding: 1rem;
-  background-color: #f8f9fa;
+  background-color: var(--background-color-secondary);
 }
 
 .detail-grid {
@@ -20,10 +20,10 @@
 .detail-item {
   display: flex;
   flex-direction: column;
-  background-color: #fff;
+  background-color: var(--background-color-light);
   padding: 0.75rem;
   border-radius: 6px;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-color);
 }
 
 .detail-item-header {
@@ -34,18 +34,18 @@
 }
 
 .detail-item-header .icon {
-  color: #6c757d;
+  color: var(--subtle-text-color);
 }
 
 .detail-label {
   font-weight: 600;
   font-size: 0.8rem;
-  color: #6c757d;
+  color: var(--subtle-text-color);
 }
 
 .detail-value {
   font-size: 0.95rem;
-  color: #212529;
+  color: var(--text-color);
   word-break: break-all;
 }
 
@@ -63,8 +63,9 @@
   font-weight: 600;
   margin-top: 0;
   margin-bottom: 0.5rem;
-  border-bottom: 2px solid #e9ecef;
+  border-bottom: 2px solid var(--border-color);
   padding-bottom: 0.25rem;
+  color: var(--text-color);
 }
 
 .detail-list {
@@ -73,17 +74,18 @@
   margin: 0;
   max-height: 150px;
   overflow-y: auto;
-  border: 1px solid #e9ecef;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  background-color: #fff;
+  background-color: var(--background-color-light);
 }
 
 .detail-list li {
   padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-color);
   font-size: 0.9rem;
   display: flex;
   justify-content: space-between;
+  color: var(--text-color);
 }
 
 .detail-list li:last-child {
@@ -108,7 +110,7 @@
 }
 
 .file-list span {
-  color: #6c757d;
+  color: var(--subtle-text-color);
   font-size: 0.85rem;
   white-space: nowrap;
 }
@@ -119,18 +121,19 @@
 .magnet-link-input {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #ced4da;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9rem;
-  background-color: #e9ecef;
+  background-color: var(--background-color-light);
+  color: var(--text-color);
   cursor: pointer;
 }
 
 .expand-button {
   width: 100%;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
+  background-color: var(--background-color-secondary);
+  border: 1px solid var(--border-color);
   border-top: none;
   border-radius: 0 0 6px 6px;
   padding: 0.5rem;
@@ -139,12 +142,12 @@
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  color: #0d6efd;
+  color: var(--primary-color);
   font-weight: 600;
 }
 
 .expand-button:hover {
-  background-color: #e9ecef;
+  background-color: var(--background-color-light);
 }
 
 @media (max-width: 768px) {

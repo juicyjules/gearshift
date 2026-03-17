@@ -1,78 +1,60 @@
-import React, { useState, useEffect, type ReactNode } from 'react';
+import React, { type ReactNode, useEffect } from 'react';
+import { AuthProvider, useAuth } from 'react-oidc-context';
+import { WebStorageStateStore } from 'oidc-client-ts';
 import { OAuthContext } from '../contexts/OAuthContext';
-import { initiateLogin, handleCallback, getAccessToken, clearAccessToken } from '../utils/oauth';
+import { getConfig } from '../config';
 
 interface OAuthProviderProps {
   children: ReactNode;
 }
 
-export const OAuthProvider: React.FC<OAuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+const OAuthContextAdapter: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const auth = useAuth();
 
   useEffect(() => {
-    const processCallback = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
-      const state = urlParams.get('state');
-      const errorParam = urlParams.get('error');
+    if (
+      auth.isAuthenticated &&
+      !auth.isLoading &&
+      window.location.search.includes("code=")
+    ) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [auth.isAuthenticated, auth.isLoading]);
 
-      if (errorParam) {
-        setError(errorParam);
-        setIsLoading(false);
-        return;
-      }
+  return (
+    <OAuthContext.Provider
+      value={{
+        isAuthenticated: auth.isAuthenticated,
+        isLoading: auth.isLoading,
+        login: () => auth.signinRedirect(),
+        logout: () => auth.signoutRedirect(),
+        error: auth.error ? auth.error.message : null,
+      }}
+    >
+      {children}
+    </OAuthContext.Provider>
+  );
+};
 
-      if (code && state) {
-        try {
-          setIsLoading(true);
-          await handleCallback(code, state);
-          // Remove query params
-          window.history.replaceState({}, document.title, window.location.pathname);
-          setIsAuthenticated(true);
-        } catch (err: unknown) {
-          console.error("OAuth Callback Error:", err);
-          if (err instanceof Error) {
-            setError(err.message || "Failed to complete login.");
-          } else {
-            setError("Failed to complete login.");
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
-        // No code, check if we already have a token
-        const token = getAccessToken();
-        if (token) {
-          setIsAuthenticated(true);
-        }
-        setIsLoading(false);
-      }
-    };
+export const OAuthProvider: React.FC<OAuthProviderProps> = ({ children }) => {
+  const config = getConfig();
 
-    processCallback();
-  }, []);
-
-  const login = () => {
-    setIsLoading(true);
-    initiateLogin().catch((err) => {
-      console.error("Login initiation failed:", err);
-      setError("Failed to initiate login.");
-      setIsLoading(false);
-    });
-  };
-
-  const logout = () => {
-    clearAccessToken();
-    setIsAuthenticated(false);
-    // Standard OAuth2 might need an end-session endpoint call,
-    // but for lightweight implementation, simply clearing local token is fine.
+  const oidcConfig = {
+    authority: config.OAUTH_AUTHORITY || '',
+    client_id: config.OAUTH_CLIENT_ID || '',
+    redirect_uri: config.OAUTH_REDIRECT_URI || window.location.origin,
+    scope: config.OAUTH_SCOPE || 'openid profile email',
+    autoSignIn: false,
+    automaticSilentRenew: true,
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
+    onSigninCallback: () => {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    },
   };
 
   return (
-    <OAuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, error }}>
-      {children}
-    </OAuthContext.Provider>
+    <AuthProvider {...oidcConfig}>
+      <OAuthContextAdapter>{children}</OAuthContextAdapter>
+    </AuthProvider>
   );
 };

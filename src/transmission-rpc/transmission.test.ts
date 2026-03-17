@@ -8,7 +8,7 @@ describe('TransmissionClient', () => {
         host: 'localhost',
         port: 9091,
       });
-      // @ts-ignore - accessing private method
+      // @ts-expect-error - accessing private method
       expect(client.getAuthHeader()).toBeUndefined();
     });
 
@@ -19,7 +19,7 @@ describe('TransmissionClient', () => {
         username: 'user',
         password: 'pass',
       });
-      // @ts-ignore - accessing private method
+      // @ts-expect-error - accessing private method
       expect(client.getAuthHeader()).toBe('Basic dXNlcjpwYXNz');
     });
 
@@ -29,7 +29,7 @@ describe('TransmissionClient', () => {
         port: 9091,
         username: 'user',
       });
-      // @ts-ignore - accessing private method
+      // @ts-expect-error - accessing private method
       expect(client.getAuthHeader()).toBe('Basic dXNlcjo=');
     });
 
@@ -39,13 +39,13 @@ describe('TransmissionClient', () => {
         port: 9091,
         password: 'pass',
       });
-      // @ts-ignore - accessing private method
+      // @ts-expect-error - accessing private method
       expect(client.getAuthHeader()).toBe('Basic OnBhc3M=');
     });
 
     it('should work when credentials are provided in the URL string', () => {
       const client = new TransmissionClient('http://user:pass@localhost:9091');
-      // @ts-ignore - accessing private method
+      // @ts-expect-error - accessing private method
       expect(client.getAuthHeader()).toBe('Basic dXNlcjpwYXNz');
     });
   });

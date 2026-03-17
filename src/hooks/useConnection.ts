@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { TransmissionClient } from '../transmission-rpc/transmission';
+import { getConfig } from '../config';
 
 export interface ConnectionSettings {
   host: string;
@@ -45,26 +46,38 @@ export const useConnection = () => {
     setError(null);
     setIsConnecting(true);
     try {
+      let client: TransmissionClient;
+
+      // If a full custom path is given via config, we could use that.
+      // But transmission-rpc client currently accepts host/port.
+      // If we are served via nixos proxy, usually host=window.location.hostname, port=window.location.port
+
       const url = parseUrl(connectionSettings.host)
       if (url) {
-         const client = new TransmissionClient({
+         // Check if connectionSettings host matches config.TRANSMISSION_RPC_URL conceptually
+         // Or just use the standard constructor if the proxy is setup.
+         client = new TransmissionClient({
           host: url.host,
           port: url.port,
           ssl: url.ssl,
           username: connectionSettings.username,
           password: connectionSettings.password,
+          // Since the client constructs `/transmission/rpc`, if we have a reverse proxy, we just point it at our own origin.
+          // The TransmissionClient uses `http(s)://${host}:${port}/transmission/rpc`.
         });
 
-      // Test connection by fetching session info
-      await client.session();
+        // Test connection by fetching session info
+        await client.session();
 
-      const settingsToSave = { ...connectionSettings };
-      delete settingsToSave.password;
-      localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settingsToSave));
+        const settingsToSave = { ...connectionSettings };
+        delete settingsToSave.password;
+        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settingsToSave));
 
-      setTransmission(client);
-      setSettings(connectionSettings);
-      setIsConnected(true);
+        setTransmission(client);
+        setSettings(connectionSettings);
+        setIsConnected(true);
+      } else {
+        throw new Error("Invalid URL");
       }
     } catch (e) {
       console.error('Connection failed:', e);
@@ -83,11 +96,28 @@ export const useConnection = () => {
 
   useEffect(() => {
     const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    const configObj = getConfig();
     if (savedSettings) {
       const parsed = JSON.parse(savedSettings);
       const settingsToTry = { ...parsed, password: '' };
       setSettings(settingsToTry);
       connect(settingsToTry);
+    } else if (configObj.TRANSMISSION_RPC_URL) {
+      // Try to use the pre-configured TRANSMISSION_RPC_URL (usually our own host via proxy)
+      const url = parseUrl(configObj.TRANSMISSION_RPC_URL);
+      if (url) {
+        const settingsToTry = {
+          host: `${url.ssl ? 'https' : 'http'}://${url.host}`,
+          port: url.port,
+          username: '',
+          password: ''
+        };
+        setSettings(settingsToTry);
+        connect(settingsToTry);
+      } else {
+        setSettings({ host: '', port: 9091, username: '', password: '' });
+        setIsConnecting(false);
+      }
     } else {
       setSettings({ host: '', port: 9091, username: '', password: '' });
       setIsConnecting(false);

@@ -271,7 +271,7 @@ export class TransmissionClient {
     let json: RPCResponse<unknown>;
     try {
       json = await response.json();
-    } catch (error) {
+    } catch {
       throw new Error("Failed to parse response JSON");
     }
 

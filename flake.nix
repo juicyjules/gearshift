@@ -105,7 +105,7 @@
 
           src = ./.;
 
-          npmDepsHash = "sha256-R6qR6S+22RjX/uN2tE1k20i9a/c0R/S2vI5M0qQ0E8c="; # Will need update if package-lock.json changes
+          npmDepsHash = lib.fakeHash; # Will need update since package-lock.json changed
 
           installPhase = ''
             runHook preInstall

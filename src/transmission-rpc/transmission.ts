@@ -264,7 +264,12 @@ export class TransmissionClient {
       );
     }
 
-    const json: RPCResponse<unknown> = await response.json();
+    let json: RPCResponse<unknown>;
+    try {
+      json = await response.json();
+    } catch (error) {
+      throw new Error("Failed to parse response JSON");
+    }
 
     if (json.result !== "success") {
       throw new Error(json.result);

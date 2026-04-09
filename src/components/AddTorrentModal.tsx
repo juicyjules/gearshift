@@ -13,7 +13,7 @@ interface AddTorrentModalProps {
 }
 
 interface StagedTorrent {
-  id: number;
+  id: number | string;
   name: string;
   hashString: string;
   status: 'loading' | 'loaded' | 'error';
@@ -38,8 +38,8 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
     const { metainfo = [], magnets = [] } = torrents;
 
     const stageFile = async (meta: string) => {
-      const tempId = Date.now() + Math.random();
-      setStagedTorrents(prev => [...prev, { id: tempId, name: 'Loading file...', hashString: tempId.toString(), status: 'loading' }]);
+      const tempId = crypto.randomUUID();
+      setStagedTorrents(prev => [...prev, { id: tempId, name: 'Loading file...', hashString: tempId, status: 'loading' }]);
       try {
         const res = await transmission.add({ metainfo: meta, paused: true });
         const { torrentAdded } = res as AddTorrentResponse;
@@ -51,8 +51,8 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
     };
 
     const stageMagnet = async (magnet: string) => {
-      const tempId = Date.now() + Math.random();
-      setStagedTorrents(prev => [...prev, { id: tempId, name: 'Loading magnet...', hashString: tempId.toString(), status: 'loading' }]);
+      const tempId = crypto.randomUUID();
+      setStagedTorrents(prev => [...prev, { id: tempId, name: 'Loading magnet...', hashString: tempId, status: 'loading' }]);
       try {
         const res = await transmission.add({ filename: magnet, paused: true });
         const { torrentAdded } = res as AddTorrentResponse;
@@ -157,7 +157,7 @@ const AddTorrentModal: React.FC<AddTorrentModalProps> = ({
     onClose();
   };
 
-  const removeStagedTorrent = (id: number) => {
+  const removeStagedTorrent = (id: number | string) => {
     const torrentToRemove = stagedTorrents.find(t => t.id === id);
     if (torrentToRemove && torrentToRemove.status === 'loaded' && transmission) {
       transmission.remove([id], true);
